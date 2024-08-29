@@ -51,7 +51,7 @@ class AlumnosListView(ListView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['dashboard_title'] = 'Lista de Alumnos'
+        context['dashboard_title'] = 'Lista de Alumnos del tec'
         context['breadcrumb_active_item'] = 'Lista de Alumno'
         context['navbar'] = 'alumno'
         return context

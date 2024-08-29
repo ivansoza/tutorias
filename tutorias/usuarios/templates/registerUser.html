@@ -5,7 +5,7 @@
     <h2>Registrar Nuevo Alumno</h2>
     <form method="post" class="my-form">
         {% csrf_token %}
-        {{ form.as_p }}  <!-- Renderiza todo el formulario aquí -->
+        {{ form.as_p }}  
         <button type="submit" class="btn btn-success">Registrar</button>
     </form>
 </div>
