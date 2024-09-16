@@ -11,7 +11,9 @@ class CustomUser(AbstractUser):
     )
     gender = models.CharField(_('género'), max_length=1, choices=GENDER_CHOICES, blank=True, null=True)
     apellido_materno = models.CharField(_('apellido materno'), max_length=150, blank=True, null=True)
-    posgrado = models.ManyToManyField(Posgrado, blank=True, verbose_name=_("Posgrado"))  # Cambiado a ManyToManyField
+    posgrado_alumno = models.ForeignKey(Posgrado, blank=True, null=True, on_delete=models.SET_NULL, verbose_name=_("Posgrado Alumno"), related_name='alumnos')
+    posgrado_docente = models.ManyToManyField(Posgrado, blank=True, verbose_name=_("Posgrado Docente"), related_name='docentes')
+
     def get_full_name(self):
         """
         Returns the first_name plus the last_name, with a space in between and includes the apellido_materno if it exists.

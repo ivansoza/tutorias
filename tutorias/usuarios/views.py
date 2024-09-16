@@ -51,10 +51,10 @@ class AlumnosListView(ListView):
         alumnos_group = Group.objects.get(name='Alumno')
         queryset = CustomUser.objects.filter(groups=alumnos_group)
         
-        # Filtrar por posgrado si se proporciona el ID del posgrado a través del GET request
+        # Filtrar por posgrado_alumno si se proporciona el ID del posgrado a través del GET request
         posgrado_id = self.request.GET.get('posgrado_id')
         if posgrado_id:
-            queryset = queryset.filter(posgrado__id=posgrado_id)
+            queryset = queryset.filter(posgrado_alumno__id=posgrado_id)
         
         return queryset
     
@@ -68,14 +68,14 @@ class AlumnosListView(ListView):
         
         # Calcula el total de maestría y doctorado en la queryset filtrada
         context['total_maestria'] = filtered_queryset.filter(
-            posgrado__nombre__in=[
+            posgrado_alumno__nombre__in=[
                 "Maestría en Sistemas Computacionales",
                 "Maestría en Ingeniería Mecatrónica",
                 "Maestría en Ingeniería Administrativa"
             ]).count()
         
         context['total_doctorado'] = filtered_queryset.filter(
-            posgrado__nombre="Doctorado en Ciencias de la Ingeniería"
+            posgrado_alumno__nombre="Doctorado en Ciencias de la Ingeniería"
         ).count()
         
         # Añade los posgrados al contexto para el selector
@@ -92,18 +92,25 @@ class AlumnosListView(ListView):
 
 
 
+
 class CustomUserCreateView(LoginRequiredMixin, CreateView):
     model = CustomUser
     form_class = CustomUserCreationFormUsuario
     template_name = 'registerUser.html'
     success_url = reverse_lazy('alumnos-list')  
-
     def form_valid(self, form):
-        user = form.save()
+        # Guardar el usuario para asignar un ID antes de agregar grupos
+        user = form.save(commit=False)
+        
+        # Guardar el usuario completamente en la base de datos
+        user.save()
+
+        # Agregar al grupo "Alumno"
         grupo, created = Group.objects.get_or_create(name='Alumno')
         user.groups.add(grupo)
         messages.success(self.request, "Alumno agregado con éxito.")
         return super().form_valid(form)
+
 
 
     def form_invalid(self, form):
