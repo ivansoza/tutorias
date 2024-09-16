@@ -3,6 +3,7 @@ from django.views.generic import ListView
 from django.contrib.auth.models import Group
 from django.contrib.auth.models import User
 from django.urls import reverse_lazy
+from generales.models import Posgrado
 from usuarios.forms import CustomUserCreationFormUsuario
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -46,18 +47,48 @@ class AlumnosListView(ListView):
     context_object_name = 'alumnos'
 
     def get_queryset(self):
+        # Filtrar por grupo 'Alumno'
         alumnos_group = Group.objects.get(name='Alumno')
-        return CustomUser.objects.filter(groups=alumnos_group)
+        queryset = CustomUser.objects.filter(groups=alumnos_group)
+        
+        # Filtrar por posgrado si se proporciona el ID del posgrado a través del GET request
+        posgrado_id = self.request.GET.get('posgrado_id')
+        if posgrado_id:
+            queryset = queryset.filter(posgrado__id=posgrado_id)
+        
+        return queryset
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        # Obtiene la queryset filtrada
+        filtered_queryset = self.get_queryset()
+        
+        # Calcula el total de estudiantes activos en la queryset filtrada
+        context['total_estudiantes'] = filtered_queryset.filter(is_active=True).count()
+        
+        # Calcula el total de maestría y doctorado en la queryset filtrada
+        context['total_maestria'] = filtered_queryset.filter(
+            posgrado__nombre__in=[
+                "Maestría en Sistemas Computacionales",
+                "Maestría en Ingeniería Mecatrónica",
+                "Maestría en Ingeniería Administrativa"
+            ]).count()
+        
+        context['total_doctorado'] = filtered_queryset.filter(
+            posgrado__nombre="Doctorado en Ciencias de la Ingeniería"
+        ).count()
+        
+        # Añade los posgrados al contexto para el selector
+        context['posgrados'] = Posgrado.objects.all()
+
+        # Meta información de la página
         context['dashboard_title'] = 'Lista de Alumnos'
         context['breadcrumb_active_item'] = 'Lista de Alumno'
         context['navbar'] = 'alumno'
         context['url'] = 'home'
-
+        
         return context
-    
+
 
 
 
@@ -65,7 +96,7 @@ class CustomUserCreateView(LoginRequiredMixin, CreateView):
     model = CustomUser
     form_class = CustomUserCreationFormUsuario
     template_name = 'registerUser.html'
-    success_url = reverse_lazy('alumnos-list')  # Asegúrate de cambiar 'detalle_familiares' por tu URL de destino.
+    success_url = reverse_lazy('alumnos-list')  
 
     def form_valid(self, form):
         user = form.save()
