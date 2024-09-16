@@ -75,8 +75,6 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'usuarios.context_processors.user_info',
-                'usuarios.context_processors.ensure_groups_exist',
-                'usuarios.context_processors.ensure_posgrados_exist',
                 'usuarios.context_processors.group_context',
 
                 

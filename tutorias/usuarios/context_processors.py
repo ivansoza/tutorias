@@ -15,38 +15,6 @@ def user_info(request):
 
 
 
-
-
-def ensure_groups_exist(request):
-    # Lista de nombres de grupos a crear
-    group_names = ["Coordinador", "Docente", "Alumno"]
-
-    # Verificar cada grupo y crearlo si no existe
-    for name in group_names:
-        Group.objects.get_or_create(name=name)
-
-    # Esta función no necesita retornar nada en el contexto
-    return {}
-
-
-
-def ensure_posgrados_exist(request):
-    # Lista de nombres de posgrados a crear
-    posgrados_names = [
-        "Maestría en Sistemas Computacionales",
-        "Maestría en Ingeniería Mecatrónica",
-        "Maestría en Ingeniería Administrativa",
-        "Doctorado en Ciencias de la Ingeniería"
-    ]
-
-    # Verificar cada posgrado y crearlo si no existe
-    for name in posgrados_names:
-        Posgrado.objects.get_or_create(nombre=name)
-
-    # Esta función no necesita retornar nada en el contexto
-    return {}
-
-
 def group_context(request):
 
     context = {
