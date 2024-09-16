@@ -38,11 +38,14 @@ class CustomUserCreationFormUsuario(UserCreationForm):
         self.fields['gender'].choices = [('', 'Seleccione Género'),] + list(self.fields['gender'].choices)[1:]  # Asegúrate de tener las opciones necesarias
 
         # Configurando el campo posgrado
-        self.fields['posgrado'].widget = forms.Select(attrs={'class': 'form-control'})
+        self.fields['posgrado'].widget = forms.SelectMultiple(attrs={'class': 'form-control'})  # Cambiado a SelectMultiple para que la interfaz coincida con la expectativa de ManyToMany
         self.fields['posgrado'].queryset = Posgrado.objects.all()
         self.fields['posgrado'].label = 'Posgrado'
         self.fields['posgrado'].required = True
 
+
         self.fields['username'].help_text = ''
         self.fields['password1'].help_text = None
         self.fields['password2'].help_text = None
+
+

@@ -107,8 +107,16 @@
                             <td>{{ user.get_full_name|upper }}</td>
                           
                             <td>{{ user.email }}</td>
-                            <td>{{ user.posgrado.nombre|default:"No asignado" }}</td>
                             <td>
+                              {% if user.posgrado.exists %}
+                                  <!-- Iterar sobre los posgrados del usuario -->
+                                  {% for posgrado in user.posgrado.all %}
+                                      {{ posgrado.nombre }}{% if not forloop.last %}, {% endif %}
+                                  {% endfor %}
+                              {% else %}
+                                  No asignado
+                              {% endif %}
+                          </td>                            <td>
                               <div class="btn-group" role="group" aria-label="Acciones de usuario">
                                   <a href="#" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar">
                                       <i class="fas fa-edit"></i>
