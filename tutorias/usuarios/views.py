@@ -54,6 +54,8 @@ class AlumnosListView(ListView):
         context['dashboard_title'] = 'Lista de Alumnos'
         context['breadcrumb_active_item'] = 'Lista de Alumno'
         context['navbar'] = 'alumno'
+        context['url'] = 'home'
+
         return context
     
 
@@ -79,7 +81,7 @@ class CustomUserCreateView(LoginRequiredMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['dashboard_title'] = 'Registro de Alumnos'
+        context['url'] = 'alumnos-list'
         context['breadcrumb_active_item'] = 'Registrar Alumno'
         context['navbar'] = 'alumno'
         return context

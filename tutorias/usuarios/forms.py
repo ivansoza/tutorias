@@ -32,7 +32,16 @@ class CustomUserCreationFormUsuario(UserCreationForm):
         self.fields['apellido_materno'].required = True
 
         # Campos adicionales
+        self.fields['gender'].widget = forms.Select(attrs={'class': 'form-control'})
         self.fields['gender'].required = False  # Si el género es opcional
+        self.fields['gender'].choices = [('', 'Seleccione Género'),] + list(self.fields['gender'].choices)[1:]  # Asegúrate de tener las opciones necesarias
+
+        # Configurando el campo posgrado
+        self.fields['posgrado'].widget = forms.Select(attrs={'class': 'form-control'})
         self.fields['posgrado'].queryset = Posgrado.objects.all()
         self.fields['posgrado'].label = 'Posgrado'
         self.fields['posgrado'].required = True
+
+        self.fields['username'].help_text = ''
+        self.fields['password1'].help_text = None
+        self.fields['password2'].help_text = None
