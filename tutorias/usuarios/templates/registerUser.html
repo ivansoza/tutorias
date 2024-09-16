@@ -55,6 +55,16 @@
                     </div>
 
                     <div class="row">
+                        <div class="col-12 col-md-6">
+                            {{ form.gender|as_crispy_field }}
+                        </div>
+                        <div class="col-12 col-md-6">
+                            {{ form.posgrado|as_crispy_field }}
+                        </div>
+                    </div>
+
+
+                    <div class="row">
                         <!-- Contraseñas y sexo -->
                         <div class="col-12 col-md-6">
                             {{ form.password1|as_crispy_field }}
@@ -64,18 +74,14 @@
                         </div>
                     </div>
 
-                    <div class="row">
-                        <div class="col-12 col-md-6">
-                            {{ form.gender|as_crispy_field }}
-                        </div>
-                        <div class="col-12 col-md-6">
-                            {{ form.posgrado|as_crispy_field }}
-                        </div>
+ 
+
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-success">Registrar</button>
+                        <!-- Botón de Cancelar como un enlace -->
+                        <a href="{% url 'alumnos-list' %}" class="btn btn-danger">Cancelar</a>
                     </div>
 
-                    <div class=" mt-4">
-                        <button type="submit" class="btn btn-success">Registrar</button>
-                    </div>
                 </form>
             </div>
         </div>

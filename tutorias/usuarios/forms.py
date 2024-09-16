@@ -19,6 +19,7 @@ class CustomUserCreationFormUsuario(UserCreationForm):
         # Configuración del campo 'username' para usar 'Número de Control' como placeholder y label
         self.fields['username'].widget.attrs.update({'placeholder': 'Número de Control'})
         self.fields['username'].label = 'Número de Control'
+        self.fields['last_name'].label = 'Apellido Paterno'  # Cambio aquí
 
         # Configuración de placeholders para otros campos
         self.fields['first_name'].widget.attrs.update({'placeholder': 'Nombre'})

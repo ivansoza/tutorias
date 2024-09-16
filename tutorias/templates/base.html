@@ -158,6 +158,8 @@
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
                
+
+            
             <li class="nav-item">
                 <a href="{% url 'home' %}" class="nav-link {% if navbar == 'home' %}active{% endif %}">
                     <i class="nav-icon fas fa-home"></i>  <!-- Cambiado a fa-home -->
@@ -167,6 +169,7 @@
                 </p>
                 </a>
             </li>
+
             
             <li class="nav-header">Usuarios</li>
             <li class="nav-item">
@@ -246,10 +249,18 @@
             {% block back  %}
             {% endblock %}
         </div>
+        
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
+
+              {% block sin_bread %}
+
+              
               <li class="breadcrumb-item"><a href="{% url "home" %}">Home</a></li>
               <li class="breadcrumb-item active">{{ breadcrumb_active_item }}</li>
+
+              {% endblock sin_bread %}
+
             </ol>
           </div><!-- /.col -->
         </div><!-- /.row -->
