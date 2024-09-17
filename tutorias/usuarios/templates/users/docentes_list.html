@@ -1,12 +1,116 @@
 {% extends 'base.html' %}
-
-{% block content %}
-  <h2>Docentes</h2>
-  <ul>
-    {% for user in docentes %}
-      <li>{{ user.get_full_name }} - {{ user.email }}</li>
-    {% empty %}
-      <li>No hay docentes registrados.</li>
-    {% endfor %}
-  </ul>
+{% block back %}
+<a href="{% url url %}" class="btn btn-link">
+    <i class="fa fa-arrow-left"></i> Regresar
+</a>
 {% endblock %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Total de Docentes -->
+        <div class="col-lg-4 col-6">
+            <div class="small-box bg-info">
+                <div class="inner">
+                    <h3>{{ total_docentes }}</h3>
+                    <p>Total de Docentes</p>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-university"></i>
+                </div>
+            </div>
+        </div>
+        <!-- Total de Maestría -->
+        <div class="col-lg-4 col-6">
+            <div class="small-box bg-success">
+                <div class="inner">
+                    <h3>{{ total_maestria }}</h3>
+                    <p>Total de Maestría</p>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-ios-bookmarks"></i>
+                </div>
+            </div>
+        </div>
+        <!-- Total de Doctorado -->
+        <div class="col-lg-4 col-6">
+            <div class="small-box bg-warning">
+                <div class="inner">
+                    <h3>{{ total_doctorado }}</h3>
+                    <p>Total de Doctorado</p>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-ios-book"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <a href="" class="btn btn-success">Registrar Docente</a>
+    <div class="card mt-3">
+        <div class="card-header">
+            <h3 class="card-title">Docentes</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3 col-12">
+                    <form method="get" action="{% url 'docentes-list' %}" class="mb-3">
+                        <div class="form-group">
+                            <select name="posgrado_id" class="form-control" onchange="this.form.submit()">
+                                <option value="">Seleccione un Posgrado</option>
+                                {% for posgrado in posgrados %}
+                                    <option value="{{ posgrado.id }}" {% if request.GET.posgrado_id == posgrado.id|stringformat:"s" %}selected{% endif %}>
+                                        {{ posgrado.nombre }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div style="overflow-x: auto;">
+                <table id="tabla" class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Número de Control</th>
+                            <th>Nombre</th>
+                            <th>Email</th>
+                            <th>Posgrado</th>
+                            <th>Opciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in docentes %}
+                        <tr>
+                            <td>{{ user.username|upper }}</td>
+                            <td>{{ user.get_full_name|upper }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.posgrado_docente.nombre|default:"No asignado" }}</td>
+                            <td>
+                              <div class="btn-group" role="group" aria-label="Acciones de usuario">
+                                  <a href="#" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar">
+                                      <i class="fas fa-edit"></i>
+                                  </a>
+                                  <a href="#" class="btn btn-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar">
+                                      <i class="fas fa-trash"></i>
+                                  </a>
+                                  <a href="#" class="btn btn-info" data-bs-toggle="tooltip" data-bs-placement="top" title="Detalles">
+                                      <i class="fas fa-info-circle"></i>
+                                  </a>
+                              </div>
+                          </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+<script>
+  var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+  var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl)
+  })
+</script>
+{% endblock script %}
