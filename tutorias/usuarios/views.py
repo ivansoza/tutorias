@@ -11,6 +11,8 @@ from django.views.generic import CreateView
 from django.contrib.auth.models import Group
 from django.shortcuts import redirect
 from .models import CustomUser
+from django.db.models import Count, Q
+
 
 # Create your views here.
 
@@ -48,28 +50,24 @@ class DocentesListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # Obtiene la queryset filtrada
         filtered_queryset = self.get_queryset()
 
-        # Calcula el total de docentes activos en la queryset filtrada
         context['total_docentes'] = filtered_queryset.filter(is_active=True).count()
 
-        # Calcula el total de maestrías y doctorados entre los docentes en la queryset filtrada
         context['total_maestria'] = filtered_queryset.filter(
             posgrado_docente__nombre__in=[
                 "Maestría en Sistemas Computacionales",
                 "Maestría en Ingeniería Mecatrónica",
                 "Maestría en Ingeniería Administrativa"
-            ]).count()
+            ]
+        ).distinct().count()
 
+        # Contar docentes que tienen un doctorado
         context['total_doctorado'] = filtered_queryset.filter(
             posgrado_docente__nombre="Doctorado en Ciencias de la Ingeniería"
-        ).count()
+        ).distinct().count()
 
-        # Añade los posgrados al contexto para el selector
         context['posgrados'] = Posgrado.objects.all()
-
-        # Meta información de la página
         context['dashboard_title'] = 'Lista de Docentes'
         context['breadcrumb_active_item'] = 'Lista de Docente'
         context['navbar'] = 'docente'
