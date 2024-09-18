@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block css %}
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+
+{% endblock css %}
+
+{% block back  %}
+         
+<a href="{% url url %}" class="btn btn-link">
+    <i class="fa fa-arrow-left"></i> Regresar
+</a>
+
+
+{% endblock  %}
+
+
+
+
+{% block content %}
+<div class="container-fluid p-4">
+
+    <div class="container-fluid ">
+        <div class="card">
+            <div class="card-header text-center">
+                <strong>
+                    Registro de Nuevo Alumno
+                </strong>
+            </div>
+            <div class="card-body">
+                <form method="post" class="form">
+                    {% csrf_token %}
+                    
+                    <div class="row">
+                        <!-- Campos de usuario y correo electrónico -->
+                        <div class="col-12 col-md-6">
+                            {{ form.username|as_crispy_field }}
+                        </div>
+                        <div class="col-12 col-md-6">
+                            {{ form.email|as_crispy_field }}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <!-- Nombres y apellidos -->
+                        <div class="col-12 col-md-4">
+                            {{ form.first_name|as_crispy_field }}
+                        </div>
+                        <div class="col-12 col-md-4">
+                            {{ form.last_name|as_crispy_field }}
+                        </div>
+                        <div class="col-12 col-md-4">
+                            {{ form.apellido_materno|as_crispy_field }}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12 col-md-6">
+                            {{ form.gender|as_crispy_field }}
+                        </div>
+                        <div class="col-12 col-md-6">
+                            {{ form.posgrado_docente|as_crispy_field }}
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+                        <!-- Contraseñas y sexo -->
+                        <div class="col-12 col-md-6">
+                            {{ form.password1|as_crispy_field }}
+                        </div>
+                        <div class="col-12 col-md-6">
+                            {{ form.password2|as_crispy_field }}
+                        </div>
+                    </div>
+
+ 
+
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-success">Registrar</button>
+                        <!-- Botón de Cancelar como un enlace -->
+                        <a href="{% url 'alumnos-list' %}" class="btn btn-danger">Cancelar</a>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block script %}
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        $('.select2').select2({
+            placeholder: "Selecciona los posgrados",
+            allowClear: true,
+            width: '100%'
+        });
+    });
+</script>
+{% endblock %}

@@ -23,6 +23,11 @@ class Command(BaseCommand):
         self.cargar_usuario_admin()
         self.cargar_alumnos()
         self.cargar_alumnos_mecatronica()
+        self.cargar_docentes_software()
+
+        self.cargar_docentes_administracion()
+
+        self.cargar_docentes_mecatronica()
         self.stdout.write(self.style.SUCCESS('Carga de datos completada.'))
 
     def cargar_grupos(self):
@@ -264,3 +269,374 @@ class Command(BaseCommand):
                 user.save()
             else:
                 self.stdout.write(self.style.WARNING(f"Alumno '{alumno['first_name']}' ya existe. No se realizaron cambios."))
+
+        
+
+
+    def cargar_docentes_software(self):
+        grupo_docente, _ = Group.objects.get_or_create(name='Docente')
+        posgrado_msc, _ = Posgrado.objects.get_or_create(nombre="Maestría en Sistemas Computacionales")
+
+        # Datos de los docentes para Maestría en Sistemas Computacionales
+        docentes_data = [
+                {
+                    "username": "juan.rr",
+                    "first_name": "Juan",
+                    "last_name": "Ramos",
+                    "apellido_materno": "Ramos",
+                    "gender": "M",
+                    "email": "juan.rr@apizaco.tecnm.mx"
+                },
+                {
+                    "username": "janai.sh",
+                    "first_name": "María Janai",
+                    "last_name": "Sánchez",
+                    "apellido_materno": "Hernández",
+                    "gender": "F",
+                    "email": "janai.sh@apizaco.tecnm.mx"
+                },
+                {
+                    "username": "elizabeth.cc",
+                    "first_name": "Elizabeth",
+                    "last_name": "Cuatecontzi",
+                    "apellido_materno": "Cuahutle",
+                    "gender": "F",
+                    "email": "elizabeth.cc@apizaco.tecnm.mx"
+                },
+                {
+                    "username": "juan.hm",
+                    "first_name": "José Juan",
+                    "last_name": "Hernández",
+                    "apellido_materno": "Mora",
+                    "gender": "M",
+                    "email": "juan.hm@apizaco.tecnm.mx"
+                },
+                {
+                    "username": "guadalupe.mb",
+                    "first_name": "María Guadalupe",
+                    "last_name": "Medina",
+                    "apellido_materno": "Barrera",
+                    "gender": "F",
+                    "email": "guadalupe.mb@apizaco.tecnm.mx"
+                },
+                {
+                    "username": "eduardo.sl",
+                    "first_name": "Eduardo",
+                    "last_name": "Sánchez",
+                    "apellido_materno": "Lucero",
+                    "gender": "M",
+                    "email": "eduardo.sl@apizaco.tecnm.mx"
+                },
+                {
+                    "username": "edmundo.bh",
+                    "first_name": "Edmundo",
+                    "last_name": "Bonilla",
+                    "apellido_materno": "Huerta",
+                    "gender": "M",
+                    "email": "edmundo.bh@apizaco.tecnm.mx"
+                },
+                {
+                    "username": "yesenia.gm",
+                    "first_name": "Yesenia Nohemí",
+                    "last_name": "González",
+                    "apellido_materno": "Meneses",
+                    "gender": "F",
+                    "email": "yesenia.gm@apizaco.tecnm.mx"
+                },
+                {
+                    "username": "blanca.pm",
+                    "first_name": "Blanca Estela",
+                    "last_name": "Pedroza",
+                    "apellido_materno": "Méndez",
+                    "gender": "F",
+                    "email": "blanca.pm@apizaco.tecnm.mx"
+                },
+                {
+                    "username": "rodolfo.pl",
+                    "first_name": "Rodolfo Eleazar",
+                    "last_name": "Pérez",
+                    "apellido_materno": "Loaiza",
+                    "gender": "M",
+                    "email": "rodolfo.pl@apizaco.tecnm.mx"
+                },
+                {
+                    "username": "federico.rc",
+                    "first_name": "José Federico",
+                    "last_name": "Ramírez",
+                    "apellido_materno": "Cruz",
+                    "gender": "M",
+                    "email": "federico.rc@apizaco.tecnm.mx"
+                },
+                {
+                    "username": "crispin.hh",
+                    "first_name": "José Crispín",
+                    "last_name": "Hernández",
+                    "apellido_materno": "Hernández",
+                    "gender": "M",
+                    "email": "crispin.hh@apizaco.tecnm.mx"
+                },
+                {
+                    "username": "perfecto.qf",
+                    "first_name": "Perfecto Malaquías",
+                    "last_name": "Quintero",
+                    "apellido_materno": "Flores",
+                    "gender": "M",
+                    "email": "perfecto.qf@apizaco.tecnm.mx"
+                },
+                {
+                    "username": "higinio.nb",
+                    "first_name": "Higinio",
+                    "last_name": "Nava",
+                    "apellido_materno": "Bautista",
+                    "gender": "M",
+                    "email": "higinio.nb@apizaco.tecnm.mx"
+                },
+                {
+                    "username": "carlos.pc",
+                    "first_name": "Carlos",
+                    "last_name": "Pérez",
+                    "apellido_materno": "Corona",
+                    "gender": "M",
+                    "email": "carlos.pc@apizaco.tecnm.mx"
+                }
+        ]
+
+        # Crear o actualizar los docentes
+        for docente in docentes_data:
+            user, created = CustomUser.objects.get_or_create(
+                username=docente['username'],
+                defaults={
+                    'first_name': docente['first_name'],
+                    'last_name': docente['last_name'],
+                    'apellido_materno': docente['apellido_materno'],
+                    'gender': docente['gender'],
+                    'email': docente['email'],
+                    'password': make_password('12345'),
+                    'is_superuser': False,
+                    'is_staff': True  # Considerando que son docentes, podrías querer marcarlos como staff
+                }
+            )
+            if created:
+                self.stdout.write(self.style.SUCCESS(f"Docente '{docente['first_name']}' creado exitosamente."))
+                user.groups.add(grupo_docente)
+                user.posgrado_docente.add(posgrado_msc)  # Asumiendo que posgrado_docente es un ManyToManyField
+                user.save()
+            else:
+                self.stdout.write(self.style.WARNING(f"Docente '{docente['first_name']}' ya existe. No se realizaron cambios."))
+
+
+
+    def cargar_docentes_administracion(self):
+        grupo_docente, _ = Group.objects.get_or_create(name='Docente')
+        posgrado_admin, _ = Posgrado.objects.get_or_create(nombre="Maestría en Ingeniería Administrativa")
+
+        # Datos de los docentes para Maestría en Ingeniería Administrativa
+        docentes_data = [
+            {
+                "username": "miguel.rl",
+                "first_name": "Miguel Ángel",
+                "last_name": "Rodríguez",
+                "apellido_materno": "Lozada",
+                "gender": "M",
+                "email": "miguel.rl@apizaco.tecnm.mx"
+            },
+            {
+                "username": "kathy.vm",
+                "first_name": "Kathy Laura",
+                "last_name": "Vargas",
+                "apellido_materno": "Matamoros",
+                "gender": "F",
+                "email": "kathy.vm@apizaco.tecnm.mx"
+            },
+            {
+                "username": "adrian.tj",
+                "first_name": "José Adrián",
+                "last_name": "Trevera",
+                "apellido_materno": "Juárez",
+                "gender": "M",
+                "email": "adrian.tj@apizaco.tecnm.mx"
+            },
+            {
+                "username": "rosa.ca",
+                "first_name": "Rosa",
+                "last_name": "Cortes",
+                "apellido_materno": "Aguirre",
+                "gender": "F",
+                "email": "rosa.ca@apizaco.tecnm.mx"
+            },
+            {
+                "username": "crisanto.th",
+                "first_name": "Crisanto",
+                "last_name": "Tenopala",
+                "apellido_materno": "Hernández",
+                "gender": "M",
+                "email": "crisanto.th@apizaco.tecnm.mx"
+            },
+            {
+                "username": "alejandra.tl",
+                "first_name": "Alejandra",
+                "last_name": "Torres",
+                "apellido_materno": "López",
+                "gender": "F",
+                "email": "alejandra.tl@apizaco.tecnm.mx"
+            },
+            {
+                "username": "jorge.cg",
+                "first_name": "Jorge Luis",
+                "last_name": "Castañeda",
+                "apellido_materno": "Gutiérrez",
+                "gender": "M",
+                "email": "jorge.cg@apizaco.tecnm.mx"
+            },
+            {
+                "username": "elizabeth.mh",
+                "first_name": "Elizabeth",
+                "last_name": "Montiel",
+                "apellido_materno": "Huerta",
+                "gender": "F",
+                "email": "elizabeth.mh@apizaco.tecnm.mx"
+            },
+            {
+                "username": "hector.dm",
+                "first_name": "Héctor",
+                "last_name": "Domínguez",
+                "apellido_materno": "Martínez",
+                "gender": "M",
+                "email": "hector.dm@apizaco.tecnm.mx"
+            },
+            {
+                "username": "acela.dj",
+                "first_name": "Acela",
+                "last_name": "Dávila",
+                "apellido_materno": "Jiménez",
+                "gender": "F",
+                "email": "acela.dj@apizaco.tecnm.mx"
+            },
+            {
+                "username": "gerardo.it",
+                "first_name": "Gerardo",
+                "last_name": "Islas",
+                "apellido_materno": "Téllez",
+                "gender": "M",
+                "email": "gerardo.it@apizaco.tecnm.mx"
+            },
+            {
+                "username": "karla.gh",
+                "first_name": "Karla",
+                "last_name": "González",
+                "apellido_materno": "Hidalgo",
+                "gender": "F",
+                "email": "karla.gh@apizaco.tecnm.mx"
+            },
+            {
+                "username": "luis.mr",
+                "first_name": "José Luis",
+                "last_name": "Moreno",
+                "apellido_materno": "Rivera",
+                "gender": "M",
+                "email": "luis.mr@apizaco.tecnm.mx"
+            }
+        ]
+
+        # Crear o actualizar los docentes
+        for docente in docentes_data:
+            user, created = CustomUser.objects.get_or_create(
+                username=docente['username'],
+                defaults={
+                    'first_name': docente['first_name'],
+                    'last_name': docente['last_name'],
+                    'apellido_materno': docente['apellido_materno'],
+                    'gender': docente['gender'],
+                    'email': docente['email'],
+                    'password': make_password('12345'),
+                    'is_superuser': False,
+                    'is_staff': True  # Suponiendo que los docentes puedan necesitar acceso al panel administrativo
+                }
+            )
+            if created:
+                self.stdout.write(self.style.SUCCESS(f"Docente '{docente['first_name']}' creado exitosamente."))
+                user.groups.add(grupo_docente)
+                user.posgrado_docente.add(posgrado_admin)  # Asumiendo que posgrado_docente es un ManyToManyField
+                user.save()
+            else:
+                self.stdout.write(self.style.WARNING(f"Docente '{docente['first_name']}' ya existe. No se realizaron cambios."))
+
+
+    def cargar_docentes_mecatronica(self):
+        grupo_docente, _ = Group.objects.get_or_create(name='Docente')
+        posgrado_mecatronica, _ = Posgrado.objects.get_or_create(nombre="Maestría en Ingeniería Mecatrónica")
+
+        # Datos de los docentes para Maestría en Ingeniería Mecatrónica
+        docentes_data = [
+            {
+                "username": "rafael.of",
+                "first_name": "Rafael",
+                "last_name": "Ordoñez",
+                "apellido_materno": "Flores",
+                "gender": "M",
+                "email": "rafael.of@apizaco.tecnm.mx"
+            },
+            {
+                "username": "roberto.mc",
+                "first_name": "Roberto",
+                "last_name": "Morales",
+                "apellido_materno": "Caporal",
+                "gender": "M",
+                "email": "roberto.mc@apizaco.tecnm.mx"
+            },
+            {
+                "username": "vicente.fl",
+                "first_name": "Vicente",
+                "last_name": "Flores",
+                "apellido_materno": "Lara",
+                "gender": "M",
+                "email": "vicente.fl@apizaco.tecnm.mx"
+            },
+            {
+                "username": "jorge.bh",
+                "first_name": "Jorge",
+                "last_name": "Bedolla",
+                "apellido_materno": "Hernández",
+                "gender": "M",
+                "email": "jorge.bh@apizaco.tecnm.mx"
+            },
+            {
+                "username": "marcos.bh",
+                "first_name": "Marcos",
+                "last_name": "Bedolla",
+                "apellido_materno": "Hernández",
+                "gender": "M",
+                "email": "marcos.bh@apizaco.tecnm.mx"
+            },
+            {
+                "username": "francisco.hc2002",
+                "first_name": "Francisco",
+                "last_name": "Hernández",
+                "apellido_materno": "Corona",
+                "gender": "M",
+                "email": "francisco_hc2002@hotmail.com"
+            }
+        ]
+
+        # Crear o actualizar los docentes
+        for docente in docentes_data:
+            user, created = CustomUser.objects.get_or_create(
+                username=docente['username'],
+                defaults={
+                    'first_name': docente['first_name'],
+                    'last_name': docente['last_name'],
+                    'apellido_materno': docente['apellido_materno'],
+                    'gender': docente['gender'],
+                    'email': docente['email'],
+                    'password': make_password('initialPassword'),  # Asigna una contraseña inicial
+                    'is_superuser': False,
+                    'is_staff': True  # Suponiendo que los docentes puedan necesitar acceso al panel administrativo
+                }
+            )
+            if created:
+                self.stdout.write(self.style.SUCCESS(f"Docente '{docente['first_name']}' creado exitosamente."))
+                user.groups.add(grupo_docente)
+                user.posgrado_docente.add(posgrado_mecatronica)  # Asumiendo que posgrado_docente es un ManyToManyField
+                user.save()
+            else:
+                self.stdout.write(self.style.WARNING(f"Docente '{docente['first_name']}' ya existe. No se realizaron cambios."))

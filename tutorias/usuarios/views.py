@@ -4,7 +4,7 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.models import User
 from django.urls import reverse_lazy
 from generales.models import Posgrado
-from usuarios.forms import CustomUserCreationFormUsuario
+from usuarios.forms import CustomUserCreationFormDocente, CustomUserCreationFormUsuario
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import CreateView
@@ -136,20 +136,12 @@ class CustomUserCreateView(LoginRequiredMixin, CreateView):
     template_name = 'registerUser.html'
     success_url = reverse_lazy('alumnos-list')  
     def form_valid(self, form):
-        # Guardar el usuario para asignar un ID antes de agregar grupos
         user = form.save(commit=False)
-        
-        # Guardar el usuario completamente en la base de datos
         user.save()
-
-        # Agregar al grupo "Alumno"
         grupo, created = Group.objects.get_or_create(name='Alumno')
         user.groups.add(grupo)
         messages.success(self.request, "Alumno agregado con éxito.")
         return super().form_valid(form)
-
-
-
     def form_invalid(self, form):
         messages.error(self.request, "Error al agregar el usuario. Por favor, corrija los errores en el formulario.")
         return super().form_invalid(form)
@@ -159,4 +151,29 @@ class CustomUserCreateView(LoginRequiredMixin, CreateView):
         context['url'] = 'alumnos-list'
         context['breadcrumb_active_item'] = 'Registrar Alumno'
         context['navbar'] = 'alumno'
+        return context
+    
+
+class CustomTeacherCreateView(LoginRequiredMixin, CreateView):
+    model = CustomUser
+    form_class = CustomUserCreationFormDocente
+    template_name = 'registerUserDocente.html'
+    success_url = reverse_lazy('docentes-list')  # Cambiado a la lista de docentes
+    def form_valid(self, form):
+        user = form.save(commit=False)
+        user.save()
+        grupo, created = Group.objects.get_or_create(name='Docente')  # Cambiado a grupo Docente
+        user.groups.add(grupo)
+        messages.success(self.request, "Docente agregado con éxito.")
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Error al agregar el docente. Por favor, corrija los errores en el formulario.")
+        return super().form_invalid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['url'] = 'docentes-list' 
+        context['breadcrumb_active_item'] = 'Registrar Docente' 
+        context['navbar'] = 'docente' 
         return context

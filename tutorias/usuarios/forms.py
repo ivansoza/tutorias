@@ -37,13 +37,48 @@ class CustomUserCreationFormUsuario(UserCreationForm):
         self.fields['gender'].required = False  # Si el género es opcional
         self.fields['gender'].choices = [('', 'Seleccione Género'),] + list(self.fields['gender'].choices)[1:]  # Asegúrate de tener las opciones necesarias
 
-        # Configurando el campo posgrado
-# En tu formulario
+
         self.fields['posgrado_alumno'].widget = forms.Select(attrs={'class': 'form-control'})
         self.fields['posgrado_alumno'].queryset = Posgrado.objects.all()
         self.fields['posgrado_alumno'].label = 'Posgrado'
         self.fields['posgrado_alumno'].required = True
 
+        self.fields['username'].help_text = ''
+        self.fields['password1'].help_text = None
+        self.fields['password2'].help_text = None
+
+
+class CustomUserCreationFormDocente(UserCreationForm):
+    class Meta(UserCreationForm.Meta):
+        model = CustomUser
+        fields = ('username', 'first_name', 'last_name', 'apellido_materno', 'email', 'password1', 'password2', 'gender', 'posgrado_docente')
+
+    def __init__(self, *args, **kwargs):
+        super(CustomUserCreationFormDocente, self).__init__(*args, **kwargs)
+
+        # Configuración del campo 'username' para usar 'Número de Identificación' como placeholder y label
+        self.fields['username'].widget.attrs.update({'placeholder': 'Número de Identificación'})
+        self.fields['username'].label = 'Número de Identificación'
+        self.fields['last_name'].label = 'Apellido Paterno'
+
+        # Configuración de placeholders para otros campos
+        self.fields['first_name'].widget.attrs.update({'placeholder': 'Nombre'})
+        self.fields['last_name'].widget.attrs.update({'placeholder': 'Apellido Paterno'})
+        self.fields['apellido_materno'].widget.attrs.update({'placeholder': 'Apellido Materno'})
+        self.fields['email'].widget.attrs.update({'placeholder': 'Correo Electrónico'})
+
+        # Ajustes del campo de género
+        self.fields['gender'].widget = forms.Select(attrs={'class': 'form-control'})
+        self.fields['gender'].required = False
+        self.fields['gender'].choices = [('', 'Seleccione Género'),] + list(self.fields['gender'].choices)[1:]
+
+        # Configuración para el campo de posgrado de docente
+        self.fields['posgrado_docente'].widget = forms.SelectMultiple(attrs={'class': 'select2'})
+        self.fields['posgrado_docente'].queryset = Posgrado.objects.all()
+        self.fields['posgrado_docente'].label = 'Posgrados'
+        self.fields['posgrado_docente'].required = True
+
+        # Ajustes para los campos de contraseña
         self.fields['username'].help_text = ''
         self.fields['password1'].help_text = None
         self.fields['password2'].help_text = None

@@ -44,7 +44,7 @@
             </div>
         </div>
     </div>
-    <a href="" class="btn btn-success">Registrar Docente</a>
+    <a href="{% url "register_user_docente" %}" class="btn btn-success">Registrar Docente</a>
     <div class="card mt-3">
         <div class="card-header">
             <h3 class="card-title">Docentes</h3>
@@ -83,8 +83,17 @@
                             <td>{{ user.username|upper }}</td>
                             <td>{{ user.get_full_name|upper }}</td>
                             <td>{{ user.email }}</td>
-                            <td>{{ user.posgrado_docente.nombre|default:"No asignado" }}</td>
                             <td>
+                                {% if user.posgrado_docente.all %}
+                                {% for posgrado in user.posgrado_docente.all %}
+                                    <span class="badge bg-secondary">{{ posgrado.nombre }}</span><br>
+                                {% endfor %}
+                            {% else %}
+                                <span class="badge bg-light text-dark">No asignado</span>
+                            {% endif %}
+                            
+                            
+                            </td>                            <td>
                               <div class="btn-group" role="group" aria-label="Acciones de usuario">
                                   <a href="#" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar">
                                       <i class="fas fa-edit"></i>
