@@ -4,7 +4,7 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.models import User
 from django.urls import reverse_lazy
 from generales.models import Posgrado
-from usuarios.forms import CustomUserCreationFormDocente, CustomUserCreationFormUsuario, CustomUserEditForm
+from usuarios.forms import CustomUserCreationFormDocente, CustomUserCreationFormUsuario, CustomUserEditForm, CustomUserEditFormDocente
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import CreateView
@@ -13,6 +13,7 @@ from django.shortcuts import redirect
 from .models import CustomUser
 from django.db.models import Count, Q
 from django.views.generic import UpdateView
+from django.contrib.messages.views import SuccessMessageMixin
 
 
 # Create your views here.
@@ -192,4 +193,25 @@ class CustomTeacherCreateView(LoginRequiredMixin, CreateView):
         context['url'] = 'docentes-list' 
         context['breadcrumb_active_item'] = 'Registrar Docente' 
         context['navbar'] = 'docente' 
+        return context
+
+class CustomTeacherEditView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
+    model = CustomUser
+    form_class = CustomUserEditFormDocente
+    template_name = 'editUserDocente.html'  # Asegúrate de crear esta plantilla
+    success_url = reverse_lazy('docentes-list')
+    success_message = "Docente actualizado con éxito."
+
+    def form_valid(self, form):
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Error al actualizar el docente. Por favor, corrija los errores en el formulario.")
+        return super().form_invalid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['url'] = 'docentes-list'
+        context['breadcrumb_active_item'] = 'Editar Docente'
+        context['navbar'] = 'docente'
         return context

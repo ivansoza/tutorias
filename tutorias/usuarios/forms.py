@@ -7,6 +7,7 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.forms import UserChangeForm
 
 
+from django.contrib.auth import get_user_model
 
 class CustomUserCreationFormUsuario(UserCreationForm):
     class Meta(UserCreationForm.Meta):
@@ -100,3 +101,23 @@ class CustomUserCreationFormDocente(UserCreationForm):
         self.fields['username'].help_text = ''
         self.fields['password1'].help_text = None
         self.fields['password2'].help_text = None
+
+
+        
+CustomUser = get_user_model()
+
+class CustomUserEditFormDocente(UserChangeForm):
+    password = None  # Esto deshabilita los campos de contraseña en el formulario
+
+    class Meta(UserChangeForm.Meta):
+        model = CustomUser
+        fields = ('username', 'first_name', 'last_name', 'apellido_materno', 'email', 'gender', 'posgrado_docente')
+        widgets = {
+            'posgrado_docente': forms.SelectMultiple(attrs={'class': 'select2'}),
+            'gender': forms.Select(attrs={'class': 'form-control'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(CustomUserEditFormDocente, self).__init__(*args, **kwargs)
+        self.fields['username'].widget.attrs.update({'placeholder': 'Número de Identificación', 'readonly': True})
+        self.fields['email'].widget.attrs.update({'readonly': True})  # Suponiendo que el correo tampoco debería ser editable
