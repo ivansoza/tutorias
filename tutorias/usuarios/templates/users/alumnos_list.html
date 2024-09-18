@@ -110,7 +110,7 @@
                             <td>{{ user.posgrado_alumno.nombre|default:"No asignado" }}</td>
                             <td>
                               <div class="btn-group" role="group" aria-label="Acciones de usuario">
-                                  <a href="#" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar">
+                                  <a href="{% url "editar-usuario" user.id%}" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar">
                                       <i class="fas fa-edit"></i>
                                   </a>
                                   <a href="#" class="btn btn-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar">

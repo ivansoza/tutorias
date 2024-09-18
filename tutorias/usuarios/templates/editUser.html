@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block css %}
+{% endblock css %}
+
+{% block back %} 
+<a href="{% url url %}" class="btn btn-link">
+    <i class="fa fa-arrow-left"></i> Regresar
+</a>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-4">
+    <div class="container-fluid ">
+        <div class="card">
+            <div class="card-header text-center">
+                <strong>
+                    Edición de Usuario
+                </strong>
+            </div>
+            <div class="card-body">
+                <form method="post" class="form">
+                    {% csrf_token %}
+                    
+                    <div class="row">
+                        <!-- Campos de usuario y correo electrónico -->
+                        <div class="col-12 col-md-6">
+                            {{ form.username|as_crispy_field }}
+                        </div>
+                        <div class="col-12 col-md-6">
+                            {{ form.email|as_crispy_field }}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <!-- Nombres y apellidos -->
+                        <div class="col-12 col-md-4">
+                            {{ form.first_name|as_crispy_field }}
+                        </div>
+                        <div class="col-12 col-md-4">
+                            {{ form.last_name|as_crispy_field }}
+                        </div>
+                        <div class="col-12 col-md-4">
+                            {{ form.apellido_materno|as_crispy_field }}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <!-- Género y Posgrado -->
+                        <div class="col-12 col-md-6">
+                            {{ form.gender|as_crispy_field }}
+                        </div>
+                        <div class="col-12 col-md-6">
+                            {{ form.posgrado_alumno|as_crispy_field }}
+                        </div>
+                    </div>
+
+                    <!-- Botones de acción -->
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-success">Actualizar</button>
+                        <!-- Botón de Cancelar como un enlace -->
+                        <a href="{% url 'alumnos-list' %}" class="btn btn-danger">Cancelar</a>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

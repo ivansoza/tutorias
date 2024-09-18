@@ -4,7 +4,7 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.models import User
 from django.urls import reverse_lazy
 from generales.models import Posgrado
-from usuarios.forms import CustomUserCreationFormDocente, CustomUserCreationFormUsuario
+from usuarios.forms import CustomUserCreationFormDocente, CustomUserCreationFormUsuario, CustomUserEditForm
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import CreateView
@@ -12,6 +12,7 @@ from django.contrib.auth.models import Group
 from django.shortcuts import redirect
 from .models import CustomUser
 from django.db.models import Count, Q
+from django.views.generic import UpdateView
 
 
 # Create your views here.
@@ -36,11 +37,9 @@ class DocentesListView(ListView):
     context_object_name = 'docentes'
 
     def get_queryset(self):
-        # Filtrar por grupo 'Docente'
         docentes_group = Group.objects.get(name='Docente')
         queryset = CustomUser.objects.filter(groups=docentes_group)
 
-        # Filtrar por posgrado_docente si se proporciona el ID del posgrado a través del GET request
         posgrado_id = self.request.GET.get('posgrado_id')
         if posgrado_id:
             queryset = queryset.filter(posgrado_docente__id=posgrado_id)
@@ -62,7 +61,6 @@ class DocentesListView(ListView):
             ]
         ).distinct().count()
 
-        # Contar docentes que tienen un doctorado
         context['total_doctorado'] = filtered_queryset.filter(
             posgrado_docente__nombre="Doctorado en Ciencias de la Ingeniería"
         ).distinct().count()
@@ -82,7 +80,6 @@ class AlumnosListView(ListView):
     context_object_name = 'alumnos'
 
     def get_queryset(self):
-        # Filtrar por grupo 'Alumno'
         alumnos_group = Group.objects.get(name='Alumno')
         queryset = CustomUser.objects.filter(groups=alumnos_group)
         
@@ -151,6 +148,27 @@ class CustomUserCreateView(LoginRequiredMixin, CreateView):
         context['navbar'] = 'alumno'
         return context
     
+
+class CustomUserEditView(LoginRequiredMixin, UpdateView):
+    model = CustomUser
+    form_class = CustomUserEditForm
+    template_name = 'editUser.html'  # Debes crear esta plantilla
+    success_url = reverse_lazy('alumnos-list')  # Ajusta según sea necesario
+
+    def form_valid(self, form):
+        messages.success(self.request, "Usuario actualizado con éxito.")
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Error al actualizar el usuario. Por favor, corrija los errores en el formulario.")
+        return super().form_invalid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['url'] = 'alumnos-list'  # O la URL adecuada
+        context['breadcrumb_active_item'] = 'Editar Usuario'
+        context['navbar'] = 'alumno'
+        return context
 
 class CustomTeacherCreateView(LoginRequiredMixin, CreateView):
     model = CustomUser

@@ -4,6 +4,7 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from generales.models import Posgrado
 from .models import CustomUser
 from django.contrib.auth.models import Group
+from django.contrib.auth.forms import UserChangeForm
 
 
 
@@ -47,6 +48,23 @@ class CustomUserCreationFormUsuario(UserCreationForm):
         self.fields['password1'].help_text = None
         self.fields['password2'].help_text = None
 
+class CustomUserEditForm(UserChangeForm):
+    class Meta:
+        model = CustomUser
+        fields = ('username', 'first_name', 'last_name', 'apellido_materno', 'email', 'gender', 'posgrado_alumno')
+    
+    def __init__(self, *args, **kwargs):
+        super(CustomUserEditForm, self).__init__(*args, **kwargs)
+        self.fields['username'].widget.attrs.update({'placeholder': 'Número de Control', 'readonly': True})  # Assuming username should not be editable
+        self.fields['first_name'].widget.attrs.update({'placeholder': 'Nombre'})
+        self.fields['last_name'].widget.attrs.update({'placeholder': 'Apellido Paterno'})
+        self.fields['apellido_materno'].widget.attrs.update({'placeholder': 'Apellido Materno'})
+        self.fields['email'].widget.attrs.update({'placeholder': 'Correo Electrónico'})
+        self.fields['gender'].widget = forms.Select(attrs={'class': 'form-control'})
+        self.fields['gender'].choices = [('', 'Seleccione Género'),] + list(self.fields['gender'].choices)[1:]
+        self.fields['posgrado_alumno'].widget = forms.Select(attrs={'class': 'form-control'})
+        self.fields['posgrado_alumno'].queryset = Posgrado.objects.all()
+        self.fields.pop('password', None)  # Removing password field if existing in UserChangeForm
 
 class CustomUserCreationFormDocente(UserCreationForm):
     class Meta(UserCreationForm.Meta):
