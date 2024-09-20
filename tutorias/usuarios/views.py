@@ -14,7 +14,9 @@ from .models import CustomUser
 from django.db.models import Count, Q
 from django.views.generic import UpdateView
 from django.contrib.messages.views import SuccessMessageMixin
+from django.urls import reverse
 
+from django.shortcuts import get_object_or_404, redirect
 
 # Create your views here.
 
@@ -215,3 +217,14 @@ class CustomTeacherEditView(LoginRequiredMixin, SuccessMessageMixin, UpdateView)
         context['breadcrumb_active_item'] = 'Editar Docente'
         context['navbar'] = 'docente'
         return context
+
+
+def eliminar_alumno(request, user_id):
+    alumno = get_object_or_404(CustomUser, id=user_id)
+    
+    if request.method == "POST":
+        alumno.delete()
+        messages.success(request, f"El alumno {alumno.get_full_name()} ha sido eliminado exitosamente.")
+        return redirect(reverse('alumnos-list'))
+    
+    return redirect('alumnos-list')
