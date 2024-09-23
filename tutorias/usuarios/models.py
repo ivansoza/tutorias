@@ -22,15 +22,7 @@ class CustomUser(AbstractUser):
         if self.apellido_materno:
             full_name += ' %s' % self.apellido_materno
         return full_name.strip()
-
-class Coordinador(models.Model):
-    posgrado = models.OneToOneField(Posgrado, on_delete=models.CASCADE, verbose_name="Posgrado", related_name='coordinador')
-    usuario = models.OneToOneField(CustomUser, on_delete=models.CASCADE, verbose_name="Usuario Coordinador")
-
-    def __str__(self):
-        return f'Coordinador de {self.posgrado.nombre}: {self.usuario.get_full_name()}'
-
-
+    
 class TutorAlumno(models.Model):
     tutor = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='tutorados')
     alumno = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='tutores')
@@ -42,3 +34,12 @@ class TutorAlumno(models.Model):
         verbose_name = "Tutoría de Alumno"
         verbose_name_plural = "Tutorías de Alumnos"
         unique_together = ('tutor', 'alumno') 
+
+class Coordinador(models.Model):
+    posgrado = models.OneToOneField(Posgrado, on_delete=models.CASCADE, verbose_name="Posgrado", related_name='coordinador')
+    usuario = models.OneToOneField(CustomUser, on_delete=models.CASCADE, verbose_name="Usuario Coordinador")
+
+    def __str__(self):
+        return f'Coordinador de {self.posgrado.nombre}: {self.usuario.get_full_name()}'
+
+

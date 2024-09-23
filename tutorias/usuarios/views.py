@@ -10,7 +10,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import CreateView
 from django.contrib.auth.models import Group
 from django.shortcuts import redirect
-from .models import Coordinador, CustomUser
+from .models import Coordinador, CustomUser, TutorAlumno
 from django.db.models import Count, Q
 from django.views.generic import UpdateView
 from django.contrib.messages.views import SuccessMessageMixin
@@ -18,6 +18,9 @@ from django.urls import reverse
 from django.views.generic import TemplateView
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
+from django.db.models import Exists, OuterRef, Subquery, OuterRef
+from django.db.models import CharField, Value as V
+from django.db.models.functions import Concat
 
 from django.shortcuts import get_object_or_404, redirect
 
@@ -88,12 +91,27 @@ class AlumnosListView(ListView):
     def get_queryset(self):
         alumnos_group = Group.objects.get(name='Alumno')
         queryset = CustomUser.objects.filter(groups=alumnos_group)
-        
-        # Filtrar por posgrado_alumno si se proporciona el ID del posgrado a través del GET request
-        posgrado_id = self.request.GET.get('posgrado_id')
-        if posgrado_id:
-            queryset = queryset.filter(posgrado_alumno__id=posgrado_id)
-        
+
+        # Subquery para obtener el nombre completo del tutor asignado
+        tutor_subquery = TutorAlumno.objects.filter(
+            alumno=OuterRef('pk')
+        ).select_related('tutor').annotate(
+            full_name=Concat(
+                'tutor__first_name',
+                V(' '),
+                'tutor__last_name',
+                V(' '),
+                'tutor__apellido_materno',
+                output_field=CharField()
+            )
+        ).values('full_name')[:1]
+
+        # Anotar si el alumno tiene un tutor y el nombre del tutor
+        queryset = queryset.annotate(
+            has_tutor=Exists(TutorAlumno.objects.filter(alumno=OuterRef('pk'))),
+            tutor_name=Subquery(tutor_subquery)
+        )
+
         return queryset
     
     def get_context_data(self, **kwargs):
@@ -124,7 +142,6 @@ class AlumnosListView(ListView):
         context['breadcrumb_active_item'] = 'Lista de Alumno'
         context['navbar'] = 'alumno'
         context['url'] = 'home'
-        
         return context
 
 
