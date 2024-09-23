@@ -14,3 +14,5 @@ class Posgrado(models.Model):
         verbose_name = "Posgrado"
         verbose_name_plural = "Posgrados"
         ordering = ['nombre']
+
+

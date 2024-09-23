@@ -15,6 +15,7 @@ from django.db.models import Count, Q
 from django.views.generic import UpdateView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse
+from django.views.generic import TemplateView
 
 from django.shortcuts import get_object_or_404, redirect
 
@@ -228,3 +229,34 @@ def eliminar_alumno(request, user_id):
         return redirect(reverse('alumnos-list'))
     
     return redirect('alumnos-list')
+
+
+
+class PosgradosListView(TemplateView):
+    template_name = 'posgrados_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        posgrados = Posgrado.objects.all().select_related('coordinador')
+        posgrados_data = []
+        coordinadores_count = 0  # Contador para coordinadores asignados
+
+        for posgrado in posgrados:
+            if hasattr(posgrado, 'coordinador'):
+                coordinador_info = posgrado.coordinador.usuario.get_full_name()
+                coordinadores_count += 1  # Incrementa por cada coordinador encontrado
+            else:
+                coordinador_info = 'Sin asignar'
+            posgrados_data.append({
+                'nombre': posgrado.nombre,
+                'coordinador': coordinador_info,
+            })
+
+        # Añadir datos al contexto
+        context['posgrados'] = posgrados_data
+        context['total_posgrados'] = posgrados.count()
+        context['total_coordinadores'] = coordinadores_count
+        context['navbar'] = 'coordinador'  # Añadir identificador de navbar
+
+        return context
+    

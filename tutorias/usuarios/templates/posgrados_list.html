@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+
+
+{% block content %}
+<div class="container-fluid">
+
+
+    <div class="row">
+        <!-- Total de Estudiantes -->
+        <div class="col-lg-6 col-6">
+            <div class="small-box bg-info">
+                <div class="inner">
+                    <h3>{{ total_posgrados }}</h3>
+                    <p>Total de Posgrados</p>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-university"></i>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-6 col-6">
+            <div class="small-box bg-success">
+                <div class="inner">
+                    <h3>{{ total_coordinadores }}</h3>
+                    <p>Total de Coordinadores</p>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-person"></i>
+                </div>
+            </div>
+        </div>
+        
+    
+    </div>
+
+
+    <div class="card mt-3">
+        <div class="card-header">
+            <h3 class="card-title">Coordinadores</h3>
+        </div>
+
+        <div class="card-body">
+            <table id="tabla" class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Nombre del Posgrado</th>
+                        <th>Coordinador Asignado</th>
+                        <th>Opciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for posgrado in posgrados %}
+                    <tr>
+                        <td>{{ posgrado.nombre }}</td>
+                        <td>{{ posgrado.coordinador }}</td>
+                        <td>
+                            {% if posgrado.coordinador == 'Sin asignar' %}
+                            <a href="#" class="btn btn-success">Asignar Coordinador</a>
+                            {% else %}
+                            <a href="#" class="btn btn-danger">Retirar Coordinador</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+
+
+    
+
+    </div>
+
+</div>
+
+
+
+{% endblock content %}
