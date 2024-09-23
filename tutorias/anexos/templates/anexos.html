@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+<style>
+    .card {
+        cursor: pointer;
+        transition: transform 0.3s ease, box-shadow 0.3s ease-out;
+        border: none;
+        border-radius: 15px;  /* Bordes más redondeados para un look moderno */
+        background: white;  /* Fondo blanco limpio */
+        overflow: hidden;  /* Asegura que todo se mantenga dentro de los bordes redondeados */
+    }
+    .card:hover {
+        transform: translateY(-10px);  /* Levanta la tarjeta al hacer hover */
+        box-shadow: 0 20px 40px rgba(0,0,0,0.15);  /* Sombra más profunda y más extensa */
+    }
+    .card-body {
+        padding: 2rem;  /* Espacio interior generoso */
+        transition: background-color 0.3s ease;  /* Transición suave del fondo */
+    }
+    .card:hover .card-body {
+        background-color: #f8f9fa;  /* Cambio sutil de color al hacer hover */
+    }
+    .card-icon {
+        font-size: 48px;  /* Icono más grande */
+        color: #0056b3;  /* Un azul más profundo para mayor sofisticación */
+        margin-bottom: 0.5rem;  /* Ajuste fino del espacio debajo del icono */
+    }
+    .card-title {
+        background-color: #007bff;  /* Fondo azul estilo botón */
+        color: white;  /* Texto blanco para contraste */
+        display: inline-block;
+        padding: 0.5rem 1rem;  /* Padding similar a un botón */
+        border-radius: 0.25rem;  /* Bordes redondeados del "botón" */
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);  /* Sombra suave para efecto 3D */
+        font-weight: 500;  /* Peso de fuente medio */
+    }
+</style>
+
+
+
+<div class="container-fluid p-4">
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-4">
+                <a href="{% url 'export_pdf' %}" target="_blank" class="card text-center text-decoration-none">
+                    <div class="card-body">
+                        <i class="fas fa-file-pdf card-icon"></i>
+                        <h5 class="card-title">Anexo 1</h5>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4">
+                <a href="{% url "anexo2" %}" target="_blank" class="card text-center text-decoration-none">
+                    <div class="card-body">
+                        <i class="fas fa-file-pdf card-icon"></i>
+                        <h5 class="card-title">Anexo 2</h5>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4">
+                <a href="{% url "anexo3" %}" target="_blank" class="card text-center text-decoration-none">
+                    <div class="card-body">
+                        <i class="fas fa-file-pdf card-icon"></i>
+                        <h5 class="card-title">Anexo 3</h5>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+    
+
+</div>
+
+
+
+{% endblock content %}
+
+
+

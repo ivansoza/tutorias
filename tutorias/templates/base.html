@@ -204,7 +204,7 @@
              
             <li class="nav-header">Anexos</li>
             <li class="nav-item">
-                <a href="pages/calendar.html" class="nav-link">
+                <a href="{% url "anexos-view" %}" class="nav-link {% if navbar == 'anexos' %}active{% endif %}">
                     <i class="nav-icon fas fa-file-alt"></i>
                     <p>
                     Anexos

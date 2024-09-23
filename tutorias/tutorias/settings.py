@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     "crispy_bootstrap5",
     #APLICACIONES EXTRAS
     'usuarios',
-    'generales'
+    'generales',
+    'anexos'
 
 ]
 
