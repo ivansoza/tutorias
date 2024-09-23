@@ -95,13 +95,19 @@
                             
                             </td>                            <td>
                               <div class="btn-group" role="group" aria-label="Acciones de usuario">
-                                  <a href="{% url "editar-docente" user.id%}" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar">
+                                  <a href="{% url "editar-docente" user.id%}" class="btn btn-primary mr-1" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar">
                                       <i class="fas fa-edit"></i>
                                   </a>
-                                  <a href="#" class="btn btn-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar">
-                                      <i class="fas fa-trash"></i>
-                                  </a>
-                                  <a href="#" class="btn btn-info" data-bs-toggle="tooltip" data-bs-placement="top" title="Detalles">
+                                <!-- Formulario para eliminar el docente -->
+                                <form action="{% url 'eliminar-docente' user.id %}" method="POST" style="display:inline;" onsubmit="return confirm('¿Está seguro que desea eliminar este docente?');">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+
+
+                                  <a href="#" class="btn btn-info ml-1" data-bs-toggle="tooltip" data-bs-placement="top" title="Detalles">
                                       <i class="fas fa-info-circle"></i>
                                   </a>
                               </div>

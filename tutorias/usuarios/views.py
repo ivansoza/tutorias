@@ -302,3 +302,11 @@ def retirar_coordinador(request, posgrado_id):
     messages.success(request, 'Coordinador retirado exitosamente.')
 
     return redirect('posgrados_list')  # Asegúrate de tener esta vista/url configurada
+
+@require_POST  # Esta vista sólo debería aceptar solicitudes POST
+def eliminar_docente(request, user_id):
+    docente = get_object_or_404(CustomUser, id=user_id)
+    
+    docente.delete()  # Eliminar el docente
+    messages.success(request, "Docente eliminado con éxito.")  # Mensaje de confirmación
+    return redirect('docentes-list')  # Redirecciona a la lista de docentes
