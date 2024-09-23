@@ -30,3 +30,15 @@ class Coordinador(models.Model):
     def __str__(self):
         return f'Coordinador de {self.posgrado.nombre}: {self.usuario.get_full_name()}'
 
+
+class TutorAlumno(models.Model):
+    tutor = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='tutorados')
+    alumno = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='tutores')
+
+    def __str__(self):
+        return f'{self.tutor.get_full_name()} tutor de {self.alumno.get_full_name()}'
+
+    class Meta:
+        verbose_name = "Tutoría de Alumno"
+        verbose_name_plural = "Tutorías de Alumnos"
+        unique_together = ('tutor', 'alumno') 
