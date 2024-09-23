@@ -10,12 +10,14 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import CreateView
 from django.contrib.auth.models import Group
 from django.shortcuts import redirect
-from .models import CustomUser
+from .models import Coordinador, CustomUser
 from django.db.models import Count, Q
 from django.views.generic import UpdateView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse
 from django.views.generic import TemplateView
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
 
 from django.shortcuts import get_object_or_404, redirect
 
@@ -248,6 +250,7 @@ class PosgradosListView(TemplateView):
             else:
                 coordinador_info = 'Sin asignar'
             posgrados_data.append({
+                'id': posgrado.id,  # Asegúrate de incluir el id aquí
                 'nombre': posgrado.nombre,
                 'coordinador': coordinador_info,
             })
@@ -257,6 +260,45 @@ class PosgradosListView(TemplateView):
         context['total_posgrados'] = posgrados.count()
         context['total_coordinadores'] = coordinadores_count
         context['navbar'] = 'coordinador'  # Añadir identificador de navbar
+        context['url'] = 'home'
 
         return context
+def get_docentes(request):
+    # Obtener todos los usuarios en el grupo 'Docente'
+    docente_group = Group.objects.get(name='Docente')
+    docentes = docente_group.user_set.all()
+
+    # Filtrar aquellos que no son coordinadores
+    coordinadores = Coordinador.objects.all().values_list('usuario_id', flat=True)
+    docentes = docentes.exclude(id__in=coordinadores)
+
+    # Preparar la respuesta
+    docentes_data = [{'id': docente.id, 'name': docente.get_full_name()} for docente in docentes]
+    return JsonResponse({'docentes': docentes_data})
+
+@require_POST
+def asignar_coordinador(request):
+
+    usuario_id = request.POST.get('usuario_id')
+    posgrado_id = request.POST.get('posgrado_id')  # Asumiendo que también se envía esto
+
+
     
+    usuario = CustomUser.objects.get(id=usuario_id)
+    posgrado = Posgrado.objects.get(id=posgrado_id)
+    
+    # Crear o actualizar el coordinador
+    Coordinador.objects.update_or_create(
+        posgrado=posgrado,
+        defaults={'usuario': usuario}
+    )
+    
+    return JsonResponse({'success': True})
+
+@require_POST
+def retirar_coordinador(request, posgrado_id):
+    posgrado = get_object_or_404(Posgrado, id=posgrado_id)
+    Coordinador.objects.filter(posgrado=posgrado).delete()
+    messages.success(request, 'Coordinador retirado exitosamente.')
+
+    return redirect('posgrados_list')  # Asegúrate de tener esta vista/url configurada

@@ -1,10 +1,52 @@
 {% extends "base.html" %}
 
 
+{% block back  %}
+         
+<a href="{% url url %}" class="btn btn-link">
+    <i class="fa fa-arrow-left"></i> Regresar
+</a>
 
+
+{% endblock  %}
 {% block content %}
 <div class="container-fluid">
+<!-- Modal -->
 
+
+
+
+
+<div class="modal fade" id="coordinatorModal" tabindex="-1" aria-labelledby="coordinatorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog"> <!-- Agregar 'modal-dialog-centered' aquí -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="coordinatorModalLabel">Asignar Coordinador</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="formCoordinador" novalidate>
+                <div class="modal-body">
+                    <!-- Formulario para asignar coordinador -->
+                    <select id="docenteSelect" class="form-control" required>
+                        <option value="" disabled selected>Seleccione un docente</option>
+                    </select>
+                    <div class="invalid-feedback">
+                        Por favor seleccione un docente de la lista.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <!-- Cambia el tipo de botón a 'submit' -->
+                    <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                </div>
+            </form>
+            
+
+        </div>
+    </div>
+</div>
+
+  
 
     <div class="row">
         <!-- Total de Estudiantes -->
@@ -47,7 +89,7 @@
                     <tr>
                         <th>Nombre del Posgrado</th>
                         <th>Coordinador Asignado</th>
-                        <th>Opciones</th>
+                        <th style="width: 15%">Opciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -56,11 +98,18 @@
                         <td>{{ posgrado.nombre }}</td>
                         <td>{{ posgrado.coordinador }}</td>
                         <td>
+
                             {% if posgrado.coordinador == 'Sin asignar' %}
-                            <a href="#" class="btn btn-success">Asignar Coordinador</a>
+                            <button class="btn btn-success" onclick="openModal({{ posgrado.id }})">Asignar Coordinador</button>
                             {% else %}
-                            <a href="#" class="btn btn-danger">Retirar Coordinador</a>
+                            <form method="POST" action="{% url 'retirar-coordinador' posgrado.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger">Retirar Coordinador</button>
+                            </form>
+
+
                             {% endif %}
+
                         </td>
                     </tr>
                     {% endfor %}
@@ -79,3 +128,76 @@
 
 
 {% endblock content %}
+
+{% block script %}
+
+<!-- Inclusión de jQuery -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    function openModal(posgradoId) { // Asegúrate de que la función acepte un parámetro
+        $('#coordinatorModal').modal('show');
+        $('#formCoordinador').attr('data-posgrado-id', posgradoId);  
+        
+
+        // Hacer la petición AJAX para obtener los docentes
+        $.ajax({
+            url: '{% url "get-docentes" %}',
+            type: 'GET',
+            dataType: 'json',
+            success: function(response) {
+                var select = $('#docenteSelect');
+                select.empty(); // Limpiar opciones antiguas
+                // Opción predeterminada no seleccionable
+                select.append($('<option>', { value: '', text: 'Seleccione un docente', selected: true, disabled: true }));
+                
+                response.docentes.forEach(function(docente) {
+                    select.append($('<option>', { value: docente.id, text: docente.name }));
+                });
+            },
+            error: function() {
+                alert('Error al cargar los docentes');
+            }
+        });
+    }
+    
+    $('#formCoordinador').on('submit', function(event) {
+        event.preventDefault();
+        if (!this.checkValidity()) {
+            event.stopPropagation();
+            $(this).addClass('was-validated');
+        } else {
+            var usuarioId = $('#docenteSelect').val();
+            var posgradoId = $(this).attr('data-posgrado-id');
+
+            console.log('Posgrado ID:', posgradoId);  // Asegúrate de que este valor no es undefined o null
+    
+            $.ajax({
+                url: '{% url "asignar-coordinador" %}',
+                type: 'POST',
+                data: {
+                    usuario_id: usuarioId,
+                    posgrado_id: posgradoId,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function(response) {
+                    if (response.success) {
+                        window.location.href = '{% url "posgrados_list" %}';
+                    }
+                },
+                error: function() {
+                    alert('Error al guardar el coordinador');
+                }
+            });
+        }
+    });
+    
+    $('#coordinatorModal').on('shown.bs.modal', function () {
+        $('#formCoordinador').removeClass('was-validated');
+    });
+</script>
+    
+    
+    
+{% endblock script %}
