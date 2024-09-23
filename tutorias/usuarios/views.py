@@ -327,3 +327,20 @@ def eliminar_docente(request, user_id):
     docente.delete()  # Eliminar el docente
     messages.success(request, "Docente eliminado con éxito.")  # Mensaje de confirmación
     return redirect('docentes-list')  # Redirecciona a la lista de docentes
+
+
+def get_docentes_by_alumno(request, user_id):
+    # Obtener el alumno y su posgrado
+    alumno = get_object_or_404(CustomUser, id=user_id)
+    posgrado_alumno = alumno.posgrado_alumno
+
+    if not posgrado_alumno:
+        return JsonResponse({"error": "El alumno no tiene posgrado asignado"}, status=400)
+
+    # Filtrar docentes que tengan el mismo posgrado asignado
+    docentes_group = Group.objects.get(name='Docente')
+    docentes = CustomUser.objects.filter(groups=docentes_group, posgrado_docente=posgrado_alumno)
+
+    # Crear la lista de docentes para devolver
+    docentes_data = [{"id": docente.id, "name": docente.get_full_name()} for docente in docentes]
+    return JsonResponse({"docentes": docentes_data})

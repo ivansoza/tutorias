@@ -16,7 +16,32 @@
 
 <div class="container-fluid">
 
-
+    <div class="modal fade" id="tutorModal" tabindex="-1" aria-labelledby="tutorModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="tutorModalLabel">Asignar Tutor a: </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="formTutor" novalidate>
+                    <div class="modal-body">
+                        <select id="tutorSelect" class="form-control" required>
+                            <option value="" disabled selected>Seleccione un tutor</option>
+                            <!-- Las opciones se llenarán dinámicamente mediante JavaScript -->
+                        </select>
+                        <div class="invalid-feedback">
+                            Por favor seleccione un tutor de la lista.
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
 
   <div class="row">
     <!-- Total de Estudiantes -->
@@ -116,9 +141,10 @@
                                         <i class="fas fa-user-check"></i>
                                     </a>
                                     {% else %}
-                                        <a href="#" class="btn btn-success mr-1" data-bs-toggle="tooltip" data-bs-placement="top" title="Asignar Tutor">
-                                            <i class="fas fa-user-friends"></i>
-                                        </a>
+                                    <a href="#" class="btn btn-success mr-1" data-bs-toggle="tooltip" data-bs-placement="top" title="Asignar Tutor" onclick="openTutorModal({{ user.id }}, '{{ user.get_full_name|escapejs }}')">
+                                        <i class="fas fa-user-friends"></i>
+                                    </a>
+                        
                                     {% endif %}
 
                                     <a href="{% url 'editar-usuario' user.id %}" class="btn btn-primary mr-1" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar">
@@ -156,6 +182,7 @@
 
 
 {% block script %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 
 <script>
@@ -175,6 +202,36 @@ var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
         });
     }
     
+    function openTutorModal(userId, userName) {
+        $('#tutorModal').modal('show');
+        $('#formTutor').attr('data-user-id', userId);
+        $('#tutorModalLabel').html(`Asignar Tutor a: <strong>${userName}</strong>`);
+    
+        // Hacer la petición AJAX para obtener los docentes basado en el posgrado del alumno
+        $.ajax({
+            url: `/usuarios/get-docentes/${userId}/`,  // Asegúrate de ajustar esta URL según tu configuración
+            type: 'GET',
+            dataType: 'json',
+            success: function(response) {
+                var select = $('#tutorSelect');
+                select.empty();
+                select.append($('<option>', { value: '', text: 'Seleccione un tutor', selected: true, disabled: true }));
+                response.docentes.forEach(function(docente) {
+                    select.append($('<option>', { value: docente.id, text: docente.name }));
+                });
+            },
+            error: function() {
+                alert('Error al cargar los docentes');
+            }
+        });
+    }
+    
+    $('#tutorModal').on('shown.bs.modal', function () {
+        $('#formTutor').removeClass('was-validated');
+    });
+
+    
+
     </script>
     
 
