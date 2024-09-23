@@ -21,6 +21,7 @@ from django.views.decorators.http import require_POST
 from django.db.models import Exists, OuterRef, Subquery, OuterRef
 from django.db.models import CharField, Value as V
 from django.db.models.functions import Concat
+from django.db import IntegrityError
 
 from django.shortcuts import get_object_or_404, redirect
 
@@ -344,3 +345,22 @@ def get_docentes_by_alumno(request, user_id):
     # Crear la lista de docentes para devolver
     docentes_data = [{"id": docente.id, "name": docente.get_full_name()} for docente in docentes]
     return JsonResponse({"docentes": docentes_data})
+
+
+@require_POST
+def asignar_tutor(request):
+    tutor_id = request.POST.get('tutor_id')
+    alumno_id = request.POST.get('alumno_id')
+
+    try:
+        tutor = get_object_or_404(CustomUser, id=tutor_id)
+        alumno = get_object_or_404(CustomUser, id=alumno_id)
+        
+        # Verificar que no existe ya una relación entre el tutor y el alumno
+        if TutorAlumno.objects.filter(tutor=tutor, alumno=alumno).exists():
+            return JsonResponse({'error': 'Este tutor ya está asignado a este alumno'}, status=400)
+        
+        TutorAlumno.objects.create(tutor=tutor, alumno=alumno)
+        return JsonResponse({'success': True})
+    except IntegrityError as e:
+        return JsonResponse({'error': str(e)}, status=400)

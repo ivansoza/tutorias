@@ -226,6 +226,41 @@ var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
         });
     }
     
+    $('#formTutor').on('submit', function(event) {
+        event.preventDefault();
+        if (!this.checkValidity()) {
+            event.stopPropagation();
+            $(this).addClass('was-validated');
+        } else {
+            var tutorId = $('#tutorSelect').val();
+            var alumnoId = $(this).attr('data-user-id');
+    
+            console.log('Alumno ID:', alumnoId);  // Debugging
+    
+            $.ajax({
+                url: '{% url "asignar-tutor" %}',
+                type: 'POST',
+                data: {
+                    tutor_id: tutorId,
+                    alumno_id: alumnoId,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function(response) {
+                    if (response.success) {
+                        window.location.href = '{% url "alumnos-list" %}';
+                        Swal.fire('Asignación Completa', 'El tutor ha sido asignado exitosamente.', 'success');
+                    } else {
+                        Swal.fire('Error', response.error, 'error');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    alert('Error al guardar la asignación del tutor');
+                }
+            });
+        }
+    });
+
+    
     $('#tutorModal').on('shown.bs.modal', function () {
         $('#formTutor').removeClass('was-validated');
     });
