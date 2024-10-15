@@ -1,5 +1,161 @@
 {% extends "anexos/baseanexo.html" %}
 {% block content %}
+
+
+
+
+<style>
+    .container {
+        margin-top: 20px;
+        padding: 20px;
+        font-size: 18px; /* Tamaño del texto */
+    }
+
+    .nombre-linea {
+        display: flex; /* Alinea el texto y la línea en una sola fila */
+        align-items: center;
+        gap: 10px; /* Espacio entre "Nombre" y la línea */
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    .input-container {
+        position: relative;
+        flex-grow: 1;
+        border-bottom: 1px solid black; /* Línea negra debajo */
+        height: 25px; /* Asegura altura fija para la línea */
+    }
+
+
+    .input-container-corto {
+        position: relative;
+        width: 100px; /* Controla la longitud de la línea */
+        border-bottom: 1px solid black; /* Línea negra debajo */
+        height: 25px; /* Asegura altura fija para la línea */
+    }
+    .input-container-medio {
+        position: relative;
+        width: 500px; /* Controla la longitud de la línea */
+        border-bottom: 1px solid black; /* Línea negra debajo */
+        height: 25px; /* Asegura altura fija para la línea */
+    }
+
+
+    .input-container.corto {
+        width: 200px; /* Ajusta la longitud de la línea */
+    }
+
+    
+
+    .input-over-line {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        border: none;
+        outline: none;
+        background: transparent;
+        font-size: 18px;
+        padding: 0 15px; 
+        white-space: normal; 
+        word-wrap: break-word; 
+        overflow-wrap: break-word; 
+        
+    }
+
+
+    .input-group {
+        display: flex;
+        align-items: center;
+        gap: 10px; /* Espacio entre los elementos */
+        margin-bottom: 10px; /* Espacio entre filas */
+    } 
+
+
+    .observaciones {
+            position: relative;
+            margin-top: 10px;
+        }
+
+        .observaciones::before {
+            content: "Observaciones:";
+            display: block;
+            margin-bottom: 30px;
+        }
+
+        .tesis {
+            position: relative;
+            margin-top: 10px;
+        }
+
+        .tesis::before {
+            content: "Nombre de la tesis (en su caso) :";
+            display: block;
+            margin-bottom: 30px;
+        }
+        .lines {
+            position: relative;
+            height: 80px; /* Ajusta la altura según necesites */
+            background-image: 
+                linear-gradient(to bottom, black 1px, transparent 1px),
+                linear-gradient(to bottom, black 1px, transparent 1px),
+                linear-gradient(to bottom, black 1px, transparent 1px);
+            background-position: 0px 0px, 0px 30px, 0px 60px;
+            background-size: 100% 1px;
+            background-repeat: repeat-x;
+        }
+
+        .lines::before {
+            content: "";
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                linear-gradient(to bottom, black 1px, transparent 1px),
+                linear-gradient(to bottom, black 1px, transparent 1px),
+                linear-gradient(to bottom, black 1px, transparent 1px);
+            background-position: left 0px, left 0px, left 0px;
+            background-size: 100% 1px;
+            background-repeat: repeat-x;
+            top: 0;
+            height: 60px; /* Mismo que .lines */
+        }
+
+        .lines span {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            padding-top: 15px; /* Espacio entre líneas y texto */
+            text-align: justify;
+            /* Ajusta el padding o margin según necesites para alinear el texto */
+        }
+
+        .observaciones-texto {
+            margin-top: -140px;
+            text-align: justify;
+            white-space: pre-wrap; /* Preserva los espacios y saltos de línea */
+        }
+        .signature-box {
+            text-align: center;
+            font-family: Arial, sans-serif;
+            margin: 50px auto;
+            width: 400px;
+        }
+
+        .line {
+            border-top: 2px solid black;
+            margin: 0 auto 10px auto;
+            width: 60%;
+        }
+
+</style>
+
+
 <div class="header">
     INSTITUTO TECNOLÓGICO DE APIZACO<br>
     División de Estudios de Posgrado e Investigación<br>
@@ -15,4 +171,146 @@
 <div class="datos-generales">
     DATOS GENERALES
 </div>
+
+
+<div class="container">
+    <div class="nombre-linea">
+        <span>Nombre:</span>
+        <div class="input-container">
+            <input type="text" class="input-over-line" value="" />
+        </div>
+    </div>
+
+    <div class="nombre-linea" style="margin-bottom: 10px;">
+        <span>Domicilio:</span>
+        <div class="input-container">
+            <input type="text" class="input-over-line" value="" />
+        </div>
+    </div>
+
+    <div class="input-group">
+        <span>Teléfono (casa):</span>
+        <div class="input-container">
+            <input type="text" class="input-over-line" value="" />
+        </div>
+        <span>Correo electrónico 1:</span>
+        <div class="input-container">
+            <input type="text" class="input-over-line" value="" />
+        </div>
+    </div>
+
+    <div class="input-group">
+        <span>Teléfono (celular):</span>
+        <div class="input-container">
+            <input type="text" class="input-over-line" value="" />
+        </div>
+        <span>Correo electrónico 2:</span>
+        <div class="input-container">
+            <input type="text" class="input-over-line" value="" />
+        </div>
+    </div>
+
+    <div class="input-group">
+        <span>Fecha de nacimiento:</span>
+        <div class="input-container">
+            <input type="text" class="input-over-line" value="" />
+        </div>
+        <span>Lugar de nacimiento:</span>
+        <div class="input-container">
+            <input type="text" class="input-over-line" value="" />
+        </div>
+    </div>
+    <div class="nombre-linea" style="margin-bottom: 10px;">
+        <span>CURP:</span>
+        <div class="input-container">
+            <input type="text" class="input-over-line" value="" />
+        </div>
+    </div>
+    <div class="input-group">
+        <span>Estado civil:</span>
+        <div class="input-container">
+            <input type="text" class="input-over-line" value="" />
+        </div>
+        <span>Dependientes Económicos:</span>
+        <div class="input-container">
+            <input type="text" class="input-over-line" value="" />
+        </div>
+    </div>
+
+    <div class="nombre-linea" style="margin-bottom: 10px;">
+        <span>Licenciatura:</span>
+        <div class="input-container">
+            <input type="text" class="input-over-line" value="" />
+        </div>
+    </div>
+    <div class="nombre-linea" style="margin-bottom: 10px;">
+        <span>Institución donde cursó la licenciatura:</span>
+        <div class="input-container">
+            <input type="text" class="input-over-line" value="" />
+        </div>
+    </div>
+    <div class="nombre-linea">
+        <span>Promedio obtenido en la licenciatura:</span>
+        <div class="input-container-corto">
+            <input type="text" class="input-over-line" value="" />
+        </div>
+    </div>
+
+    <div class="nombre-linea">
+        <span>Opción de Titulación:</span>
+        <div class="input-container">
+            <input type="text" class="input-over-line" value="" />
+        </div>
+    </div>
+    
+    <div class="tesis">
+        <div class="lines">
+            <!-- Las líneas están creadas mediante CSS de fondo -->
+        </div>
+        <div class="observaciones-texto" contenteditable="true">
+          
+        </div>
+    </div>
+    
+
+    <div class="nombre-linea" style="margin-top: 50px;">
+        <span>Idioma inglés (TOEFL):</span>
+        <div class="input-container-corto">
+            <input type="text" class="input-over-line" value="%" />
+        </div>
+    </div>
+
+    <div class="nombre-linea" style="margin-bottom: 10px;">
+        <span>Beca y tipo de beca:</span>
+        <div class="input-container">
+            <input type="text" class="input-over-line" value="" />
+        </div>
+    </div>
+
+
+
+    <div class="observaciones">
+        <div class="lines">
+            <!-- Las líneas están creadas mediante CSS de fondo -->
+        </div>
+        <div class="observaciones-texto" contenteditable="true">
+     
+        </div>
+    </div>
+
+
+
+
+    
+
+
+</div>
+
+<div class="signature-box">
+    <div class="line"></div>
+    <p>Miguel Alberto Zuta Alvarado</p>
+    <p>DNI: 45874522</p>
+</div>
+
+
 {% endblock %}

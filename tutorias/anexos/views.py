@@ -7,11 +7,20 @@ from django.views.generic import TemplateView
 
 from weasyprint import HTML
 # from weasyprint.fonts import FontConfiguration
+from django.templatetags.static import static
 
+
+#ANEXO 1 
 class GenerarPDF(View):
     def get(self, request, *args, **kwargs):
+
+                
+        marca_agua_url = request.build_absolute_uri(static('img/escudo.png'))
+
         contexto = {
             'mensaje': 'Este es un PDF de ejemplo generado con WeasyPrint en Django.',
+            'marca_agua': marca_agua_url,  # Agregamos la URL de la marca de agua al contexto
+
         }
         html_string = render_to_string("anexos/anexo1.html", contexto)        
         html = HTML(string=html_string)
@@ -23,8 +32,12 @@ class GenerarPDF(View):
     
 class Anexo2(View):
     def get(self, request, *args, **kwargs):
+        marca_agua_url = request.build_absolute_uri(static('img/escudo.png'))
+
         contexto = {
             'mensaje': 'Este es un PDF de ejemplo generado con WeasyPrint en Django.',
+            'marca_agua': marca_agua_url,  # Agregamos la URL de la marca de agua al contexto
+
         }
         html_string = render_to_string("anexos/anexo2.html", contexto)        
         html = HTML(string=html_string)
@@ -36,8 +49,12 @@ class Anexo2(View):
     
 class Anexo3(View):
     def get(self, request, *args, **kwargs):
+        marca_agua_url = request.build_absolute_uri(static('img/escudo.png'))
+
         contexto = {
             'mensaje': 'Este es un PDF de ejemplo generado con WeasyPrint en Django.',
+            'marca_agua': marca_agua_url,  # Agregamos la URL de la marca de agua al contexto
+
         }
         html_string = render_to_string("anexos/anexo3.html", contexto)        
         html = HTML(string=html_string)
