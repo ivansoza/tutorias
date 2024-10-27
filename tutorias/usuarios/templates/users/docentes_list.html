@@ -5,6 +5,30 @@
 </a>
 {% endblock %}
 {% block content %}
+
+<!-- Modal para mostrar detalles del docente -->
+<div class="modal fade" id="detallesDocenteModal" tabindex="-1" aria-labelledby="detallesDocenteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Detalles del Docente</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <h5 id="docenteNombre"></h5>
+                <h6>Alumnos Asignados:</h6>
+                <div id="docenteAlumnos">
+                    <!-- Lista de alumnos será insertada aquí -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <div class="container-fluid">
     <div class="row">
         <!-- Total de Docentes -->
@@ -108,12 +132,28 @@
 
 
 
-                                  <a href="#" class="btn btn-info ml-1" data-bs-toggle="tooltip" data-bs-placement="top" title="Detalles">
-                                      <i class="fas fa-info-circle"></i>
-                                  </a>
+                                <a href="#" class="btn btn-info ml-1 btn-detalles-docente" data-bs-toggle="tooltip" data-bs-placement="top" title="Detalles"
+                                data-docente-id="{{ user.id }}"
+                                data-docente-name="{{ user.get_full_name|escapejs }}">
+                                 <i class="fas fa-info-circle"></i>
+                             </a>
                               </div>
                           </td>
                         </tr>
+
+                        <!-- Div oculto con la lista de alumnos asignados al docente -->
+                        <div class="docente-alumnos" id="docente-alumnos-{{ user.id }}" style="display: none;">
+                            {% if user.tutorados.all %}
+                                <ul class="list-group">
+                                    {% for tutor in user.tutorados.all %}
+                                        <li class="list-group-item">{{ tutor.alumno.get_full_name }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <p>No tiene alumnos agregados actualmente.</p>
+                            {% endif %}
+                        </div>
+
                         {% endfor %}
                     </tbody>
                 </table>
@@ -123,6 +163,13 @@
 </div>
 {% endblock %}
 {% block script %}
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> <!-- Incluye SweetAlert2 -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Incluye jQuery -->
+
+
+
 <script>
   var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
   var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
@@ -132,26 +179,42 @@
 
 
   $('.delete-form').on('submit', function(event) {
-    event.preventDefault(); // Prevenir el envío inmediato del formulario
+        event.preventDefault(); // Prevenir el envío inmediato del formulario
 
-    var form = this;
+        var form = this;
+        var docenteName = $(this).data('docente-name');
+
+        Swal.fire({
+            title: '¿Estás seguro?',
+            html: `¿Deseas eliminar al docente <strong>${docenteName}</strong>?<br><strong>¡Esta acción no se puede deshacer!</strong>`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Eliminar',
+            cancelButtonText: 'Cancelar',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Si el usuario confirma, enviar el formulario
+                form.submit();
+            }
+            // Si el usuario cancela, no hacer nada
+        });
+
+    });
+
+$('.btn-detalles-docente').on('click', function(event) {
+    event.preventDefault(); // Prevenir la acción por defecto del enlace
+
+    var docenteId = $(this).data('docente-id');
     var docenteName = $(this).data('docente-name');
 
-    Swal.fire({
-        title: '¿Estás seguro?',
-        html: `¿Deseas eliminar al docente <strong>${docenteName}</strong>?<br><strong>¡Esta acción no se puede deshacer!</strong>`,
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Eliminar',
-        cancelButtonText: 'Cancelar',
-        reverseButtons: true
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // Si el usuario confirma, enviar el formulario
-            form.submit();
-        }
-        // Si el usuario cancela, no hacer nada
-    });
+    // Obtener el contenido de la lista de alumnos desde el div oculto
+    var alumnosContent = $('#docente-alumnos-' + docenteId).html();
+
+    $('#docenteNombre').text(docenteName);
+    $('#docenteAlumnos').html(alumnosContent);
+
+    $('#detallesDocenteModal').modal('show');
 });
 </script>
 {% endblock script %}

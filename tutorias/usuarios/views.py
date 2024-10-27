@@ -22,6 +22,7 @@ from django.db.models import Exists, OuterRef, Subquery, OuterRef
 from django.db.models import CharField, Value as V
 from django.db.models.functions import Concat
 from django.db import IntegrityError
+from django.db.models import Prefetch
 
 from django.shortcuts import get_object_or_404, redirect
 
@@ -48,7 +49,10 @@ class DocentesListView(ListView):
 
     def get_queryset(self):
         docentes_group = Group.objects.get(name='Docente')
-        queryset = CustomUser.objects.filter(groups=docentes_group)
+        # Prefetch related 'tutorados' y 'alumno' para cada docente
+        queryset = CustomUser.objects.filter(groups=docentes_group).prefetch_related(
+            Prefetch('tutorados', queryset=TutorAlumno.objects.select_related('alumno'))
+        )
 
         posgrado_id = self.request.GET.get('posgrado_id')
         if posgrado_id:
