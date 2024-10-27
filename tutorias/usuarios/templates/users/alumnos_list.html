@@ -152,12 +152,13 @@
                                     </a>
                                     
                                     <!-- Formulario para eliminar el usuario -->
-                                    <form action="{% url 'eliminar-alumno' user.id %}" method="POST" style="display:inline;">
+                                    <form action="{% url 'eliminar-alumno' user.id %}" method="POST" style="display:inline;" class="delete-form" data-alumno-name="{{ user.get_full_name|escapejs }}">
                                         {% csrf_token %}
-                                        <button type="submit" class="btn btn-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar">
+                                        <button type="submit" class="btn btn-danger delete-button" data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </form>
+                                    
                                     
                                     <a href="#" class="btn btn-info ml-1" data-bs-toggle="tooltip" data-bs-placement="top" title="Detalles">
                                         <i class="fas fa-info-circle"></i>
@@ -273,7 +274,29 @@ var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
     $('#tutorModal').on('shown.bs.modal', function () {
         $('#formTutor').removeClass('was-validated');
     });
+    
+    $('.delete-form').on('submit', function(event) {
+        event.preventDefault(); // Prevenir el envío inmediato del formulario
 
+        var form = this;
+        var alumnoName = $(this).data('alumno-name');
+
+        Swal.fire({
+            title: '¿Estás seguro?',
+            html: `¿Deseas eliminar al estudiante <strong>${alumnoName}</strong>?<br><strong>¡Esta acción no se puede deshacer!</strong>`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Eliminar',
+            cancelButtonText: 'Cancelar',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Si el usuario confirma, enviar el formulario
+                form.submit();
+            }
+            // Si el usuario cancela, no hacer nada
+        });
+    });
     
 
     </script>
