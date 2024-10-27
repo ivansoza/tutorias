@@ -137,10 +137,10 @@
                                 <div class="btn-group" role="group" aria-label="Acciones de usuario">
 
                                     {% if user.has_tutor %}
-                                    <a href="#" class="btn btn-secondary mr-1" data-bs-toggle="tooltip" data-bs-placement="top" title="Tutor Asignado" onclick="showTutorInfo('{{ user.tutor_name }}')">
+                                    <a href="#" class="btn btn-secondary mr-1" data-bs-toggle="tooltip" data-bs-placement="top" title="Tutor Asignado" onclick="showTutorInfo('{{ user.tutor_name }}', {{ user.id }}, '{{ user.get_full_name|escapejs }}')">
                                         <i class="fas fa-user-check"></i>
                                     </a>
-                                    {% else %}
+                                                                        {% else %}
                                     <a href="#" class="btn btn-success mr-1" data-bs-toggle="tooltip" data-bs-placement="top" title="Asignar Tutor" onclick="openTutorModal({{ user.id }}, '{{ user.get_full_name|escapejs }}')">
                                         <i class="fas fa-user-friends"></i>
                                     </a>
@@ -193,14 +193,23 @@ var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
 </script>
 
 <script>
-    function showTutorInfo(tutorName) {
+    function showTutorInfo(tutorName, userId, userName) {
         Swal.fire({
             title: 'Tutor Asignado',
-            html: `El tutor asignado es <strong>${tutorName}</strong>`,  // Uso de 'html' en lugar de 'text'
+            html: `El tutor asignado es <strong>${tutorName}</strong>`,
             icon: 'info',
-            confirmButtonText: 'Cerrar'
+            showCancelButton: true,
+            confirmButtonText: 'OK',
+            cancelButtonText: 'Cambiar Tutor',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.dismiss === Swal.DismissReason.cancel) {
+                // Si el usuario elige "Cambiar Tutor", abre el modal para cambiarlo
+                openTutorModal(userId, userName);
+            }
         });
     }
+    
     
     function openTutorModal(userId, userName) {
         $('#tutorModal').modal('show');
@@ -235,8 +244,6 @@ var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
             var tutorId = $('#tutorSelect').val();
             var alumnoId = $(this).attr('data-user-id');
     
-            console.log('Alumno ID:', alumnoId);  // Debugging
-    
             $.ajax({
                 url: '{% url "asignar-tutor" %}',
                 type: 'POST',
@@ -247,18 +254,20 @@ var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
                 },
                 success: function(response) {
                     if (response.success) {
-                        window.location.href = '{% url "alumnos-list" %}';
-                        Swal.fire('Asignación Completa', 'El tutor ha sido asignado exitosamente.', 'success');
+                        Swal.fire('Asignación Completa', 'El tutor ha sido asignado exitosamente.', 'success').then(() => {
+                            window.location.href = '{% url "alumnos-list" %}';
+                        });
                     } else {
                         Swal.fire('Error', response.error, 'error');
                     }
                 },
                 error: function(xhr, status, error) {
-                    alert('Error al guardar la asignación del tutor');
+                    Swal.fire('Error', 'Error al guardar la asignación del tutor', 'error');
                 }
             });
         }
     });
+    
 
     
     $('#tutorModal').on('shown.bs.modal', function () {

@@ -93,10 +93,8 @@ class AlumnosListView(ListView):
         alumnos_group = Group.objects.get(name='Alumno')
         queryset = CustomUser.objects.filter(groups=alumnos_group)
 
-        # Subquery para obtener el nombre completo del tutor asignado
-        tutor_subquery = TutorAlumno.objects.filter(
-            alumno=OuterRef('pk')
-        ).select_related('tutor').annotate(
+        # Anotar si el alumno tiene un tutor y el nombre completo del tutor
+        tutor_full_name = TutorAlumno.objects.filter(alumno=OuterRef('pk')).annotate(
             full_name=Concat(
                 'tutor__first_name',
                 V(' '),
@@ -107,14 +105,13 @@ class AlumnosListView(ListView):
             )
         ).values('full_name')[:1]
 
-        # Anotar si el alumno tiene un tutor y el nombre del tutor
         queryset = queryset.annotate(
             has_tutor=Exists(TutorAlumno.objects.filter(alumno=OuterRef('pk'))),
-            tutor_name=Subquery(tutor_subquery)
+            tutor_name=Subquery(tutor_full_name)
         )
 
         return queryset
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # Obtiene la queryset filtrada
@@ -144,6 +141,7 @@ class AlumnosListView(ListView):
         context['navbar'] = 'alumno'
         context['url'] = 'home'
         return context
+
 
 
 
@@ -329,7 +327,6 @@ def eliminar_docente(request, user_id):
     messages.success(request, "Docente eliminado con éxito.")  # Mensaje de confirmación
     return redirect('docentes-list')  # Redirecciona a la lista de docentes
 
-
 def get_docentes_by_alumno(request, user_id):
     # Obtener el alumno y su posgrado
     alumno = get_object_or_404(CustomUser, id=user_id)
@@ -356,11 +353,14 @@ def asignar_tutor(request):
         tutor = get_object_or_404(CustomUser, id=tutor_id)
         alumno = get_object_or_404(CustomUser, id=alumno_id)
         
-        # Verificar que no existe ya una relación entre el tutor y el alumno
-        if TutorAlumno.objects.filter(tutor=tutor, alumno=alumno).exists():
-            return JsonResponse({'error': 'Este tutor ya está asignado a este alumno'}, status=400)
+        # Obtener o crear la relación TutorAlumno
+        tutor_alumno, created = TutorAlumno.objects.get_or_create(alumno=alumno, defaults={'tutor': tutor})
         
-        TutorAlumno.objects.create(tutor=tutor, alumno=alumno)
+        if not created:
+            # Si ya existe, actualizar el tutor
+            tutor_alumno.tutor = tutor
+            tutor_alumno.save()
+        
         return JsonResponse({'success': True})
     except IntegrityError as e:
         return JsonResponse({'error': str(e)}, status=400)
