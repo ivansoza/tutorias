@@ -82,10 +82,11 @@ class BaseAnexo(models.Model):
     estado = models.CharField(max_length=20, choices=EstadoAnexo.choices, default=EstadoAnexo.EN_PROCESO)
     observaciones = models.TextField(blank=True, null=True)
     archivo = models.FileField(upload_to='anexos/%Y/%m/%d/', blank=True, null=True)
-
     # Preguntas de ejemplo
     pregunta1 = models.CharField(max_length=255, blank=True, null=True)
     pregunta2 = models.CharField(max_length=255, blank=True, null=True)
+    fecha_creacion = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de Creación")
+    fecha_finalizacion = models.DateTimeField(blank=True, null=True, verbose_name="Fecha de Finalización")
 
     class Meta:
         abstract = True

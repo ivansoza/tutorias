@@ -1,0 +1,36 @@
+<!-- templates/users/anexo_detail.html -->
+
+{% extends 'base.html' %}
+
+{% block back %}
+<a href="{% url 'semestre-detail' alumno.id semestre.numero %}" class="btn btn-link">
+    <i class="fa fa-arrow-left"></i> Regresar
+</a>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3>Detalles del {{ anexo_nombre }} - Semestre {{ semestre.numero }} - {{ alumno.get_full_name|upper }}</h3>
+        </div>
+        <div class="card-body">
+            <!-- Detalles del anexo -->
+            <p><strong>Estado:</strong> {{ anexo.get_estado_display }}</p>
+            <p><strong>Fecha de Creación:</strong> {{ anexo.fecha_creacion|date:"d/m/Y H:i" }}</p>
+            {% if anexo.fecha_finalizacion %}
+                <p><strong>Fecha de Finalización:</strong> {{ anexo.fecha_finalizacion|date:"d/m/Y H:i" }}</p>
+            {% endif %}
+            <p><strong>Observaciones:</strong> {{ anexo.observaciones|default:"Sin observaciones" }}</p>
+
+            <!-- Aquí podrías mostrar las preguntas o el formulario cuando lo implementes -->
+            <p><strong>Pregunta 1:</strong> {{ anexo.pregunta1|default:"No respondida" }}</p>
+            <p><strong>Pregunta 2:</strong> {{ anexo.pregunta2|default:"No respondida" }}</p>
+
+            {% if anexo.archivo %}
+                <p><strong>Archivo Subido:</strong> <a href="{{ anexo.archivo.url }}">Descargar</a></p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

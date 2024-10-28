@@ -11,7 +11,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import CreateView
 from django.contrib.auth.models import Group
 from django.shortcuts import redirect
-from .models import Anexo1, Anexo2, Anexo3, Coordinador, CustomUser, Semestre, TutorAlumno
+from .models import Anexo1, Anexo2, Anexo3, Coordinador, CustomUser, EstadoAnexo, Semestre, TutorAlumno
 from django.db.models import Count, Q
 from django.views.generic import UpdateView
 from django.contrib.messages.views import SuccessMessageMixin
@@ -26,6 +26,7 @@ from django.db import IntegrityError
 from django.db.models import Prefetch
 from django.views.generic import DetailView
 from django.http import HttpResponseForbidden
+from django.http import Http404
 
 from django.shortcuts import get_object_or_404, redirect
 
@@ -519,3 +520,94 @@ class FinalizarSemestreView(LoginRequiredMixin, View):
             messages.error(request, "No puede finalizar un semestre que no ha sido iniciado o que ya ha sido finalizado.")
 
         return redirect(reverse('alumno-detail', args=[alumno_id]))
+    
+
+class SemestreDetailView(DetailView):
+    model = Semestre
+    template_name = 'users/semestre_detail.html'
+    context_object_name = 'semestre'
+
+    def get_object(self):
+        alumno_id = self.kwargs['alumno_id']
+        numero = self.kwargs['semestre_numero']
+        alumno = get_object_or_404(CustomUser, id=alumno_id)
+        semestre = get_object_or_404(Semestre, alumno=alumno, numero=numero)
+        return semestre
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        semestre = self.get_object()
+        alumno = semestre.alumno
+
+        # Obtener los anexos asociados al semestre
+        anexo1 = Anexo1.objects.get(semestre=semestre)
+        anexo2 = Anexo2.objects.get(semestre=semestre)
+        anexo3 = Anexo3.objects.get(semestre=semestre)
+
+        # Determinar si se puede acceder a cada anexo
+        estados_anexos = {
+            'Anexo1': {
+                'puede_acceder': True,
+                'anexo': anexo1,
+            },
+            'Anexo2': {
+                'puede_acceder': anexo1.estado == EstadoAnexo.FINALIZADO,
+                'anexo': anexo2,
+            },
+            'Anexo3': {
+                'puede_acceder': anexo1.estado == EstadoAnexo.FINALIZADO and anexo2.estado == EstadoAnexo.FINALIZADO,
+                'anexo': anexo3,
+            },
+        }
+        context['estados_anexos'] = estados_anexos
+        context['alumno'] = alumno
+
+        # Meta información de la página
+        context['dashboard_title'] = f'Detalle del Semestre {semestre.numero}'
+        context['breadcrumb_active_item'] = f'Semestre {semestre.numero}'
+        context['navbar'] = 'alumno'
+        context['url'] = 'alumno-detail'
+        context['alumno_id'] = alumno.id
+
+        return context
+    
+# views.py
+
+class AnexoDetailView(DetailView):
+    template_name = 'users/anexo_detail.html'
+
+    def get_object(self):
+        alumno_id = self.kwargs['alumno_id']
+        semestre_numero = self.kwargs['semestre_numero']
+        anexo_nombre = self.kwargs['anexo_nombre']
+        alumno = get_object_or_404(CustomUser, id=alumno_id)
+        semestre = get_object_or_404(Semestre, alumno=alumno, numero=semestre_numero)
+
+        # Obtener el anexo correspondiente
+        if anexo_nombre == 'Anexo1':
+            anexo = get_object_or_404(Anexo1, semestre=semestre)
+        elif anexo_nombre == 'Anexo2':
+            anexo = get_object_or_404(Anexo2, semestre=semestre)
+        elif anexo_nombre == 'Anexo3':
+            anexo = get_object_or_404(Anexo3, semestre=semestre)
+        else:
+            raise Http404("Anexo no encontrado")
+        return anexo
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        anexo = self.get_object()
+        context['anexo'] = anexo
+        context['alumno'] = anexo.alumno
+        context['semestre'] = anexo.semestre
+        context['anexo_nombre'] = self.kwargs['anexo_nombre']
+
+        # Meta información de la página
+        context['dashboard_title'] = f'Detalle del {self.kwargs["anexo_nombre"]}'
+        context['breadcrumb_active_item'] = self.kwargs['anexo_nombre']
+        context['navbar'] = 'alumno'
+        context['url'] = 'semestre-detail'
+        context['alumno_id'] = anexo.alumno.id
+        context['semestre_numero'] = anexo.semestre.numero
+
+        return context
