@@ -1,5 +1,6 @@
+from django.utils import timezone
 from django.shortcuts import render
-from django.views.generic import ListView
+from django.views.generic import ListView, View
 from django.contrib.auth.models import Group
 from django.contrib.auth.models import User
 from django.urls import reverse_lazy
@@ -10,7 +11,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import CreateView
 from django.contrib.auth.models import Group
 from django.shortcuts import redirect
-from .models import Coordinador, CustomUser, TutorAlumno
+from .models import Coordinador, CustomUser, Semestre, TutorAlumno
 from django.db.models import Count, Q
 from django.views.generic import UpdateView
 from django.contrib.messages.views import SuccessMessageMixin
@@ -24,6 +25,7 @@ from django.db.models.functions import Concat
 from django.db import IntegrityError
 from django.db.models import Prefetch
 from django.views.generic import DetailView
+from django.http import HttpResponseForbidden
 
 from django.shortcuts import get_object_or_404, redirect
 
@@ -371,6 +373,8 @@ def asignar_tutor(request):
         return JsonResponse({'error': str(e)}, status=400)
 
 
+# views.py
+
 class AlumnoDetailView(DetailView):
     model = CustomUser
     template_name = 'alumno_detail.html'
@@ -379,11 +383,37 @@ class AlumnoDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         alumno = self.get_object()
+        usuario_actual = self.request.user
+
         try:
             tutor_alumno = TutorAlumno.objects.get(alumno=alumno)
             context['tutor_name'] = tutor_alumno.tutor.get_full_name()
         except TutorAlumno.DoesNotExist:
             context['tutor_name'] = None
+            tutor_alumno = None  # Asegurarnos de que tutor_alumno esté definido
+
+        # Determinar el número de semestres según el posgrado
+        if alumno.posgrado_alumno and alumno.posgrado_alumno.nombre == "Doctorado en Ciencias de la Ingeniería":
+            total_semestres = 8
+        else:
+            total_semestres = 4
+
+        # Obtener o crear los semestres para el alumno
+        semestres = []
+        for numero in range(1, total_semestres + 1):
+            semestre, created = Semestre.objects.get_or_create(alumno=alumno, numero=numero)
+            semestres.append(semestre)
+        context['semestres'] = semestres
+
+        # Determinar si el usuario actual tiene permiso para iniciar/finalizar semestres
+        es_superuser = usuario_actual.is_superuser
+        es_admin = usuario_actual.is_staff  # Asumiendo que los administradores tienen is_staff=True
+        pertenece_coordinador = usuario_actual.groups.filter(name='Coordinador').exists()
+        es_tutor_del_alumno = False
+        if tutor_alumno and tutor_alumno.tutor == usuario_actual:
+            es_tutor_del_alumno = True
+
+        context['puede_modificar_semestres'] = es_superuser or es_admin or pertenece_coordinador or es_tutor_del_alumno
 
         # Meta información de la página
         context['dashboard_title'] = 'Detalle del Alumno'
@@ -391,3 +421,75 @@ class AlumnoDetailView(DetailView):
         context['navbar'] = 'alumno'
         context['url'] = 'alumnos-list'
         return context
+
+
+class IniciarSemestreView(LoginRequiredMixin, View):
+    def post(self, request, alumno_id, semestre_numero):
+        alumno = get_object_or_404(CustomUser, id=alumno_id)
+        semestre = get_object_or_404(Semestre, alumno=alumno, numero=semestre_numero)
+        usuario_actual = request.user
+
+        # Verificar permisos
+        es_superuser = usuario_actual.is_superuser
+        es_admin = usuario_actual.is_staff
+        pertenece_coordinador = usuario_actual.groups.filter(name='Coordinador').exists()
+        es_tutor_del_alumno = False
+        try:
+            tutor_alumno = TutorAlumno.objects.get(alumno=alumno)
+            if tutor_alumno.tutor == usuario_actual:
+                es_tutor_del_alumno = True
+        except TutorAlumno.DoesNotExist:
+            pass
+
+        if not (es_superuser or es_admin or pertenece_coordinador or es_tutor_del_alumno):
+            return HttpResponseForbidden("No tienes permiso para realizar esta acción.")
+
+        # Verificar que todos los semestres anteriores hayan sido iniciados y finalizados
+        semestres_previos = Semestre.objects.filter(alumno=alumno, numero__lt=semestre.numero)
+        for s in semestres_previos:
+            if not s.iniciado or not s.finalizado:
+                messages.error(request, f"No puedes iniciar el Semestre {semestre.numero} hasta que todos los semestres anteriores hayan sido iniciados y finalizados.")
+                return redirect(reverse('alumno-detail', args=[alumno_id]))
+
+        # Proceder a iniciar el semestre
+        if not semestre.iniciado:
+            semestre.iniciado = True
+            semestre.fecha_inicio = timezone.now()
+            semestre.save()
+            messages.success(request, f"Semestre {semestre.numero} iniciado para {alumno.get_full_name()}.")
+        else:
+            messages.warning(request, f"El Semestre {semestre.numero} ya ha sido iniciado.")
+
+        return redirect(reverse('alumno-detail', args=[alumno_id]))
+
+class FinalizarSemestreView(LoginRequiredMixin, View):
+    def post(self, request, alumno_id, semestre_numero):
+        alumno = get_object_or_404(CustomUser, id=alumno_id)
+        semestre = get_object_or_404(Semestre, alumno=alumno, numero=semestre_numero)
+        usuario_actual = request.user
+
+        # Verificar permisos
+        es_superuser = usuario_actual.is_superuser
+        es_admin = usuario_actual.is_staff
+        pertenece_coordinador = usuario_actual.groups.filter(name='Coordinador').exists()
+        es_tutor_del_alumno = False
+        try:
+            tutor_alumno = TutorAlumno.objects.get(alumno=alumno)
+            if tutor_alumno.tutor == usuario_actual:
+                es_tutor_del_alumno = True
+        except TutorAlumno.DoesNotExist:
+            pass
+
+        if not (es_superuser or es_admin or pertenece_coordinador or es_tutor_del_alumno):
+            return HttpResponseForbidden("No tienes permiso para realizar esta acción.")
+
+        # Proceder a finalizar el semestre
+        if semestre.iniciado and not semestre.finalizado:
+            semestre.finalizado = True
+            semestre.fecha_fin = timezone.now()
+            semestre.save()
+            messages.success(request, f"Semestre {semestre.numero} finalizado para {alumno.get_full_name()}.")
+        else:
+            messages.error(request, "No puede finalizar un semestre que no ha sido iniciado o que ya ha sido finalizado.")
+
+        return redirect(reverse('alumno-detail', args=[alumno_id]))

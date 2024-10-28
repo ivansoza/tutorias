@@ -48,3 +48,23 @@ class Coordinador(models.Model):
         return f'Coordinador de {self.posgrado.nombre}: {self.usuario.get_full_name()}'
 
 
+
+
+from django.utils import timezone
+
+class Semestre(models.Model):
+    alumno = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='semestres')
+    numero = models.PositiveIntegerField(verbose_name="Número de Semestre")
+    fecha_inicio = models.DateTimeField(blank=True, null=True, verbose_name="Fecha de Inicio")
+    fecha_fin = models.DateTimeField(blank=True, null=True, verbose_name="Fecha de Fin")
+    iniciado = models.BooleanField(default=False)
+    finalizado = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Semestre {self.numero} - {self.alumno.get_full_name()}"
+
+    class Meta:
+        verbose_name = "Semestre"
+        verbose_name_plural = "Semestres"
+        ordering = ['numero']
+        unique_together = ('alumno', 'numero')

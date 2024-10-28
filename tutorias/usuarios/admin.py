@@ -1,12 +1,13 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser, TutorAlumno
+from .models import CustomUser, TutorAlumno, Semestre
 
 
 
 
 
 admin.site.register(CustomUser)
+admin.site.register(Semestre)
 @admin.register(TutorAlumno)
 class TutorAlumnoAdmin(admin.ModelAdmin):
     list_display = ('tutor', 'alumno')

@@ -1,5 +1,6 @@
 from django.db import models
 
+
 # Create your models here.
 
 class Posgrado(models.Model):
@@ -14,5 +15,6 @@ class Posgrado(models.Model):
         verbose_name = "Posgrado"
         verbose_name_plural = "Posgrados"
         ordering = ['nombre']
+
 
 
