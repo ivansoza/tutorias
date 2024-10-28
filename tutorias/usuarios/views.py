@@ -11,7 +11,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import CreateView
 from django.contrib.auth.models import Group
 from django.shortcuts import redirect
-from .models import Coordinador, CustomUser, Semestre, TutorAlumno
+from .models import Anexo1, Anexo2, Anexo3, Coordinador, CustomUser, Semestre, TutorAlumno
 from django.db.models import Count, Q
 from django.views.generic import UpdateView
 from django.contrib.messages.views import SuccessMessageMixin
@@ -375,6 +375,8 @@ def asignar_tutor(request):
 
 # views.py
 
+# views.py
+
 class AlumnoDetailView(DetailView):
     model = CustomUser
     template_name = 'alumno_detail.html'
@@ -388,9 +390,11 @@ class AlumnoDetailView(DetailView):
         try:
             tutor_alumno = TutorAlumno.objects.get(alumno=alumno)
             context['tutor_name'] = tutor_alumno.tutor.get_full_name()
+            tiene_tutor = True
         except TutorAlumno.DoesNotExist:
             context['tutor_name'] = None
-            tutor_alumno = None  # Asegurarnos de que tutor_alumno esté definido
+            tutor_alumno = None
+            tiene_tutor = False
 
         # Determinar el número de semestres según el posgrado
         if alumno.posgrado_alumno and alumno.posgrado_alumno.nombre == "Doctorado en Ciencias de la Ingeniería":
@@ -402,18 +406,28 @@ class AlumnoDetailView(DetailView):
         semestres = []
         for numero in range(1, total_semestres + 1):
             semestre, created = Semestre.objects.get_or_create(alumno=alumno, numero=numero)
+
+            # Verificar si el semestre anterior ha sido finalizado
+            if numero == 1:
+                semestre.anterior_finalizado = True  # No hay semestre anterior
+            else:
+                semestre_anterior = Semestre.objects.get(alumno=alumno, numero=numero - 1)
+                semestre.anterior_finalizado = semestre_anterior.finalizado
+
             semestres.append(semestre)
+
         context['semestres'] = semestres
 
         # Determinar si el usuario actual tiene permiso para iniciar/finalizar semestres
         es_superuser = usuario_actual.is_superuser
-        es_admin = usuario_actual.is_staff  # Asumiendo que los administradores tienen is_staff=True
+        es_admin = usuario_actual.is_staff
         pertenece_coordinador = usuario_actual.groups.filter(name='Coordinador').exists()
         es_tutor_del_alumno = False
         if tutor_alumno and tutor_alumno.tutor == usuario_actual:
             es_tutor_del_alumno = True
 
         context['puede_modificar_semestres'] = es_superuser or es_admin or pertenece_coordinador or es_tutor_del_alumno
+        context['tiene_tutor'] = tiene_tutor
 
         # Meta información de la página
         context['dashboard_title'] = 'Detalle del Alumno'
@@ -439,7 +453,8 @@ class IniciarSemestreView(LoginRequiredMixin, View):
             if tutor_alumno.tutor == usuario_actual:
                 es_tutor_del_alumno = True
         except TutorAlumno.DoesNotExist:
-            pass
+            messages.error(request, "El alumno no tiene tutor asignado. Asigne un tutor antes de iniciar el semestre.")
+            return redirect(reverse('alumno-detail', args=[alumno_id]))
 
         if not (es_superuser or es_admin or pertenece_coordinador or es_tutor_del_alumno):
             return HttpResponseForbidden("No tienes permiso para realizar esta acción.")
@@ -451,12 +466,23 @@ class IniciarSemestreView(LoginRequiredMixin, View):
                 messages.error(request, f"No puedes iniciar el Semestre {semestre.numero} hasta que todos los semestres anteriores hayan sido iniciados y finalizados.")
                 return redirect(reverse('alumno-detail', args=[alumno_id]))
 
+        # Verificar si el alumno tiene tutor asignado
+        if not tutor_alumno:
+            messages.error(request, "El alumno no tiene tutor asignado. Asigne un tutor antes de iniciar el semestre.")
+            return redirect(reverse('alumno-detail', args=[alumno_id]))
+
         # Proceder a iniciar el semestre
         if not semestre.iniciado:
             semestre.iniciado = True
             semestre.fecha_inicio = timezone.now()
             semestre.save()
-            messages.success(request, f"Semestre {semestre.numero} iniciado para {alumno.get_full_name()}.")
+
+            # Crear los anexos asociados al semestre
+            Anexo1.objects.create(semestre=semestre, alumno=alumno, tutor=tutor_alumno.tutor)
+            Anexo2.objects.create(semestre=semestre, alumno=alumno, tutor=tutor_alumno.tutor)
+            Anexo3.objects.create(semestre=semestre, alumno=alumno, tutor=tutor_alumno.tutor)
+
+            messages.success(request, f"Semestre {semestre.numero} iniciado para {alumno.get_full_name()} y anexos creados.")
         else:
             messages.warning(request, f"El Semestre {semestre.numero} ya ha sido iniciado.")
 

@@ -68,3 +68,48 @@ class Semestre(models.Model):
         verbose_name_plural = "Semestres"
         ordering = ['numero']
         unique_together = ('alumno', 'numero')
+
+
+class EstadoAnexo(models.TextChoices):
+    EN_PROCESO = 'EN_PROCESO', 'En proceso'
+    FINALIZADO = 'FINALIZADO', 'Finalizado'
+    REVISADO = 'REVISADO', 'Revisado'
+
+class BaseAnexo(models.Model):
+    semestre = models.ForeignKey(Semestre, on_delete=models.CASCADE, related_name='%(class)s')
+    alumno = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='%(class)s_alumno')
+    tutor = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='%(class)s_tutor')
+    estado = models.CharField(max_length=20, choices=EstadoAnexo.choices, default=EstadoAnexo.EN_PROCESO)
+    observaciones = models.TextField(blank=True, null=True)
+    archivo = models.FileField(upload_to='anexos/%Y/%m/%d/', blank=True, null=True)
+
+    # Preguntas de ejemplo
+    pregunta1 = models.CharField(max_length=255, blank=True, null=True)
+    pregunta2 = models.CharField(max_length=255, blank=True, null=True)
+
+    class Meta:
+        abstract = True
+
+class Anexo1(BaseAnexo):
+    class Meta:
+        verbose_name = "Anexo 1"
+        verbose_name_plural = "Anexos 1"
+
+    def __str__(self):
+        return f"Anexo 1 - {self.alumno.get_full_name()} - Semestre {self.semestre.numero}"
+
+class Anexo2(BaseAnexo):
+    class Meta:
+        verbose_name = "Anexo 2"
+        verbose_name_plural = "Anexos 2"
+
+    def __str__(self):
+        return f"Anexo 2 - {self.alumno.get_full_name()} - Semestre {self.semestre.numero}"
+
+class Anexo3(BaseAnexo):
+    class Meta:
+        verbose_name = "Anexo 3"
+        verbose_name_plural = "Anexos 3"
+
+    def __str__(self):
+        return f"Anexo 3 - {self.alumno.get_full_name()} - Semestre {self.semestre.numero}"
