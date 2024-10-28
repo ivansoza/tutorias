@@ -5,7 +5,7 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.models import User
 from django.urls import reverse_lazy
 from generales.models import Posgrado
-from usuarios.forms import CustomUserCreationFormDocente, CustomUserCreationFormUsuario, CustomUserEditForm, CustomUserEditFormDocente
+from usuarios.forms import Anexo1Form, Anexo1TutorForm, Anexo2Form, Anexo2TutorForm, Anexo3Form, Anexo3TutorForm, CustomUserCreationFormDocente, CustomUserCreationFormUsuario, CustomUserEditForm, CustomUserEditFormDocente
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import CreateView
@@ -27,6 +27,8 @@ from django.db.models import Prefetch
 from django.views.generic import DetailView
 from django.http import HttpResponseForbidden
 from django.http import Http404
+from django.http import HttpResponseRedirect
+from django.views.generic.edit import UpdateView
 
 from django.shortcuts import get_object_or_404, redirect
 
@@ -522,6 +524,8 @@ class FinalizarSemestreView(LoginRequiredMixin, View):
         return redirect(reverse('alumno-detail', args=[alumno_id]))
     
 
+# views.py
+
 class SemestreDetailView(DetailView):
     model = Semestre
     template_name = 'users/semestre_detail.html'
@@ -551,11 +555,11 @@ class SemestreDetailView(DetailView):
                 'anexo': anexo1,
             },
             'Anexo2': {
-                'puede_acceder': anexo1.estado == EstadoAnexo.FINALIZADO,
+                'puede_acceder': anexo1.estado == EstadoAnexo.REVISADO and anexo1.archivo,
                 'anexo': anexo2,
             },
             'Anexo3': {
-                'puede_acceder': anexo1.estado == EstadoAnexo.FINALIZADO and anexo2.estado == EstadoAnexo.FINALIZADO,
+                'puede_acceder': anexo1.estado == EstadoAnexo.REVISADO and anexo2.estado == EstadoAnexo.REVISADO and anexo2.archivo,
                 'anexo': anexo3,
             },
         }
@@ -570,7 +574,7 @@ class SemestreDetailView(DetailView):
         context['alumno_id'] = alumno.id
 
         return context
-    
+
 # views.py
 
 class AnexoDetailView(DetailView):
@@ -602,6 +606,16 @@ class AnexoDetailView(DetailView):
         context['semestre'] = anexo.semestre
         context['anexo_nombre'] = self.kwargs['anexo_nombre']
 
+        # Determinar permisos
+        user = self.request.user
+        es_alumno = user == anexo.alumno
+        es_tutor = user == anexo.tutor
+        es_superuser = user.is_superuser
+        es_admin = user.is_staff
+        pertenece_coordinador = user.groups.filter(name='Coordinador').exists()
+
+        context['puede_editar_anexo'] = user.is_authenticated and (es_alumno or es_tutor or es_superuser or es_admin or pertenece_coordinador)
+
         # Meta información de la página
         context['dashboard_title'] = f'Detalle del {self.kwargs["anexo_nombre"]}'
         context['breadcrumb_active_item'] = self.kwargs['anexo_nombre']
@@ -611,3 +625,112 @@ class AnexoDetailView(DetailView):
         context['semestre_numero'] = anexo.semestre.numero
 
         return context
+
+class AnexoEditView(LoginRequiredMixin, UpdateView):
+    template_name = 'users/anexo_form.html'
+
+    def get_object(self):
+        alumno_id = self.kwargs['alumno_id']
+        semestre_numero = self.kwargs['semestre_numero']
+        anexo_nombre = self.kwargs['anexo_nombre']
+        alumno = get_object_or_404(CustomUser, id=alumno_id)
+        semestre = get_object_or_404(Semestre, alumno=alumno, numero=semestre_numero)
+
+        if anexo_nombre == 'Anexo1':
+            anexo = get_object_or_404(Anexo1, semestre=semestre)
+        elif anexo_nombre == 'Anexo2':
+            anexo = get_object_or_404(Anexo2, semestre=semestre)
+        elif anexo_nombre == 'Anexo3':
+            anexo = get_object_or_404(Anexo3, semestre=semestre)
+        else:
+            raise Http404("Anexo no encontrado")
+        return anexo
+
+    def get_form_class(self):
+        anexo_nombre = self.kwargs['anexo_nombre']
+        user = self.request.user
+        anexo = self.get_object()
+        es_tutor = user == anexo.tutor
+        es_superuser = user.is_superuser
+        es_admin = user.is_staff
+        pertenece_coordinador = user.groups.filter(name='Coordinador').exists()
+
+        if es_tutor or es_superuser or es_admin or pertenece_coordinador:
+            # Usar formulario que incluye 'estado' y 'observaciones'
+            if anexo_nombre == 'Anexo1':
+                return Anexo1TutorForm
+            elif anexo_nombre == 'Anexo2':
+                return Anexo2TutorForm
+            elif anexo_nombre == 'Anexo3':
+                return Anexo3TutorForm
+        else:
+            # Usar formulario para alumnos
+            if anexo_nombre == 'Anexo1':
+                return Anexo1Form
+            elif anexo_nombre == 'Anexo2':
+                return Anexo2Form
+            elif anexo_nombre == 'Anexo3':
+                return Anexo3Form
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        anexo = self.get_object()
+        context['anexo'] = anexo
+        context['alumno'] = anexo.alumno
+        context['semestre'] = anexo.semestre
+        context['anexo_nombre'] = self.kwargs['anexo_nombre']
+        context['dashboard_title'] = f'Editar {self.kwargs["anexo_nombre"]}'
+        context['breadcrumb_active_item'] = f'Editar {self.kwargs["anexo_nombre"]}'
+        context['navbar'] = 'alumno'
+        context['alumno_id'] = anexo.alumno.id
+        context['semestre_numero'] = anexo.semestre.numero
+            
+        context['form_class_name'] = self.get_form_class().__name__  # Añade esta línea
+
+        return context
+
+    def form_valid(self, form):
+        anexo = form.save(commit=False)
+
+        # Si el estado cambia a 'REVISADO' y no tiene fecha de finalización, la asignamos
+        if anexo.estado == EstadoAnexo.REVISADO and not anexo.fecha_finalizacion:
+            anexo.fecha_finalizacion = timezone.now()
+        anexo.save()
+        messages.success(self.request, f"{self.kwargs['anexo_nombre']} actualizado exitosamente.")
+        return HttpResponseRedirect(self.get_success_url())
+    def form_invalid(self, form):
+        # Agregar un mensaje con los errores del formulario
+        messages.error(self.request, "El formulario contiene errores. Por favor verifica los datos ingresados.")
+        
+        # Agregar detalles específicos del error en el mensaje
+        for field, errors in form.errors.items():
+            for error in errors:
+                messages.error(self.request, f"Error en {field}: {error}")
+
+        return super().form_invalid(form)
+    def get_success_url(self):
+        anexo = self.get_object()
+        return reverse('anexo-detail', kwargs={
+            'alumno_id': anexo.alumno.id,
+            'semestre_numero': anexo.semestre.numero,
+            'anexo_nombre': self.kwargs['anexo_nombre']
+        })
+
+    def dispatch(self, request, *args, **kwargs):
+        anexo = self.get_object()
+        user = request.user
+        puede_editar = False
+        es_alumno = user == anexo.alumno
+        es_tutor = user == anexo.tutor
+        es_superuser = user.is_superuser
+        es_admin = user.is_staff
+        pertenece_coordinador = user.groups.filter(name='Coordinador').exists()
+
+        if es_alumno or es_tutor or es_superuser or es_admin or pertenece_coordinador:
+            puede_editar = True
+
+        if not puede_editar:
+            messages.error(request, "No tienes permiso para editar este anexo.")
+            return redirect('anexo-detail', alumno_id=anexo.alumno.id, semestre_numero=anexo.semestre.numero, anexo_nombre=self.kwargs['anexo_nombre'])
+
+        return super().dispatch(request, *args, **kwargs)

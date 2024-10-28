@@ -12,7 +12,7 @@
 <div class="container mt-4">
     <div class="card mb-4">
         <div class="card-header">
-            <h3>Detalles del {{ anexo_nombre }} - Semestre {{ semestre.numero }} - {{ alumno.get_full_name|upper }}</h3>
+            <h3>{{ anexo_nombre }} - Semestre {{ semestre.numero }} - {{ alumno.get_full_name|upper }}</h3>
         </div>
         <div class="card-body">
             <!-- Detalles del anexo -->
@@ -22,13 +22,16 @@
                 <p><strong>Fecha de Finalización:</strong> {{ anexo.fecha_finalizacion|date:"d/m/Y H:i" }}</p>
             {% endif %}
             <p><strong>Observaciones:</strong> {{ anexo.observaciones|default:"Sin observaciones" }}</p>
-
-            <!-- Aquí podrías mostrar las preguntas o el formulario cuando lo implementes -->
-            <p><strong>Pregunta 1:</strong> {{ anexo.pregunta1|default:"No respondida" }}</p>
-            <p><strong>Pregunta 2:</strong> {{ anexo.pregunta2|default:"No respondida" }}</p>
-
             {% if anexo.archivo %}
                 <p><strong>Archivo Subido:</strong> <a href="{{ anexo.archivo.url }}">Descargar</a></p>
+            {% endif %}
+
+            <!-- Botones de acción -->
+            {% if puede_editar_anexo %}
+                <div class="mt-3">
+                    <a href="{% url 'anexo-edit' alumno.id semestre.numero anexo_nombre %}" class="btn btn-primary">Editar {{ anexo_nombre }}</a>
+                    <a href="#" class="btn btn-danger"><i class="fas fa-file-pdf"></i> Generar PDF</a>
+                </div>
             {% endif %}
         </div>
     </div>

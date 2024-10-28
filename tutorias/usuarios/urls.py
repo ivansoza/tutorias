@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import AlumnoDetailView, AnexoDetailView, CoordinadoresListView, CustomTeacherCreateView, CustomTeacherEditView, CustomUserCreateView, CustomUserEditView, DocentesListView, AlumnosListView, FinalizarSemestreView, IniciarSemestreView, PosgradosListView, SemestreDetailView, asignar_coordinador, asignar_tutor, eliminar_alumno, eliminar_docente, get_docentes, get_docentes_by_alumno, retirar_coordinador
+from .views import AlumnoDetailView, AnexoDetailView, AnexoEditView, CoordinadoresListView, CustomTeacherCreateView, CustomTeacherEditView, CustomUserCreateView, CustomUserEditView, DocentesListView, AlumnosListView, FinalizarSemestreView, IniciarSemestreView, PosgradosListView, SemestreDetailView, asignar_coordinador, asignar_tutor, eliminar_alumno, eliminar_docente, get_docentes, get_docentes_by_alumno, retirar_coordinador
 
 urlpatterns = [
     path('coordinadores/', CoordinadoresListView.as_view(), name='coordinadores-list'),
@@ -25,5 +25,6 @@ urlpatterns = [
     path('alumnos/<int:alumno_id>/semestre/<int:semestre_numero>/', SemestreDetailView.as_view(), name='semestre-detail'),
 
     path('alumnos/<int:alumno_id>/semestre/<int:semestre_numero>/anexo/<str:anexo_nombre>/', AnexoDetailView.as_view(), name='anexo-detail'),
+    path('alumnos/<int:alumno_id>/semestre/<int:semestre_numero>/anexo/<str:anexo_nombre>/editar/', AnexoEditView.as_view(), name='anexo-edit'),
 
 ]
