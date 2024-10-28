@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import CoordinadoresListView, CustomTeacherCreateView, CustomTeacherEditView, CustomUserCreateView, CustomUserEditView, DocentesListView, AlumnosListView, PosgradosListView, asignar_coordinador, asignar_tutor, eliminar_alumno, eliminar_docente, get_docentes, get_docentes_by_alumno, retirar_coordinador
+from .views import AlumnoDetailView, CoordinadoresListView, CustomTeacherCreateView, CustomTeacherEditView, CustomUserCreateView, CustomUserEditView, DocentesListView, AlumnosListView, PosgradosListView, asignar_coordinador, asignar_tutor, eliminar_alumno, eliminar_docente, get_docentes, get_docentes_by_alumno, retirar_coordinador
 
 urlpatterns = [
     path('coordinadores/', CoordinadoresListView.as_view(), name='coordinadores-list'),
@@ -19,5 +19,6 @@ urlpatterns = [
     path('eliminar-docente/<int:user_id>/', eliminar_docente, name='eliminar-docente'),
     path('get-docentes/<int:user_id>/', get_docentes_by_alumno, name='get-docentes-by-alumno'),
     path('asignar-tutor/', asignar_tutor, name='asignar-tutor'),
+    path('alumnos/detalle/<int:pk>/', AlumnoDetailView.as_view(), name='alumno-detail'),
 
 ]

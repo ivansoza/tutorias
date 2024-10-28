@@ -23,6 +23,7 @@ from django.db.models import CharField, Value as V
 from django.db.models.functions import Concat
 from django.db import IntegrityError
 from django.db.models import Prefetch
+from django.views.generic import DetailView
 
 from django.shortcuts import get_object_or_404, redirect
 
@@ -368,3 +369,25 @@ def asignar_tutor(request):
         return JsonResponse({'success': True})
     except IntegrityError as e:
         return JsonResponse({'error': str(e)}, status=400)
+
+
+class AlumnoDetailView(DetailView):
+    model = CustomUser
+    template_name = 'alumno_detail.html'
+    context_object_name = 'alumno'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        alumno = self.get_object()
+        try:
+            tutor_alumno = TutorAlumno.objects.get(alumno=alumno)
+            context['tutor_name'] = tutor_alumno.tutor.get_full_name()
+        except TutorAlumno.DoesNotExist:
+            context['tutor_name'] = None
+
+        # Meta información de la página
+        context['dashboard_title'] = 'Detalle del Alumno'
+        context['breadcrumb_active_item'] = 'Detalle del Alumno'
+        context['navbar'] = 'alumno'
+        context['url'] = 'alumnos-list'
+        return context

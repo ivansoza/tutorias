@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block back %}
+<a href="{% url url %}" class="btn btn-link">
+    <i class="fa fa-arrow-left"></i> Regresar
+</a>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h3>Detalles del Estudiante</h3>
+        </div>
+        <div class="card-body">
+            <p><strong>Número de Control:</strong> {{ alumno.username|upper }}</p>
+            <p><strong>Nombre:</strong> {{ alumno.get_full_name|upper }}</p>
+            <p><strong>Email:</strong> {{ alumno.email }}</p>
+            <p><strong>Posgrado:</strong> {{ alumno.posgrado_alumno.nombre|default:"No asignado" }}</p>
+
+            {% if tutor_name %}
+                <p><strong>Tutor Asignado:</strong> {{ tutor_name|upper }}</p>
+            {% else %}
+                <div class="alert alert-warning" role="alert">
+                    <i class="fas fa-exclamation-triangle"></i> Tutor sin asignar
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
