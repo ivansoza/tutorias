@@ -19,500 +19,270 @@
                 </strong>
             </div>
             <div class="card-body">
-                {% if form_class_name == 'Anexo1TutorForm' %}
-                    <div class="row">
-                        <div class="col-12 col-md-12">
-                            {{ form.domicilio|as_crispy_field }}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12 col-md-6">
-                            {{ form.telefono_casa|as_crispy_field }}
-                        </div>
-                        <div class="col-12 col-md-6">
-                            {{ form.correo_electronico1|as_crispy_field }}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12 col-md-6">
-                            {{ form.telefono_celular|as_crispy_field }}
-                        </div>
-                        <div class="col-12 col-md-6">
-                            {{ form.correo_electronico2|as_crispy_field }}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12 col-md-6">
-                            {{ form.fecha_nacimiento|as_crispy_field }}
-                        </div>
-                        <div class="col-12 col-md-6">
-                            {{ form.lugar_nacimiento|as_crispy_field }}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12 col-md-12">
-                            {{ form.curp|as_crispy_field }}
-                        </div>
-                        <div class="col-12 col-md-6">
-                            {{ form.estado_civil|as_crispy_field }}
-                        </div>
-                        <div class="col-12 col-md-6">
-                            {{ form.dependientes_economicos|as_crispy_field }}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12 col-md-12">
-                            {{ form.licenciatura|as_crispy_field }}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12 col-md-12">
-                            {{ form.institucion_licenciatura|as_crispy_field }}
-                        </div>
-                        <div class="col-12 col-md-3">
-                            {{ form.promedio_licenciatura|as_crispy_field }}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12 col-md-12">
-                            {{ form.opcion_titulacion|as_crispy_field }}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12 col-md-12">
-                            {{ form.nombre_tesis|as_crispy_field }}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12 col-md-3">
-                            {{ form.idioma_ingles_toefl|as_crispy_field }}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12 col-md-12">
-                            {{ form.beca_tipo|as_crispy_field }}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12 col-md-12">
-                            {{ form.observaciones_anexo1|as_crispy_field }}
-                        </div>
-                    </div>
-
-                    <!-- Tarjeta adicional para Acciones y Observaciones Generales -->
-                    <div class="card mt-4">
-                        <div class="card-header">
-                            Acciones y Observaciones Generales
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-12 col-md-12">
-                                    {{ form.estado|as_crispy_field }}
-                                </div>
-                                <div class="col-12 col-md-12">
-                                    {{ form.observaciones|as_crispy_field }}
-                                </div>
-                                <div class="col-12 col-md-12">
-                                    {{ form.archivo|as_crispy_field }}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                {% elif form_class_name == 'Anexo1Form' %}
-                    <!-- Código específico para Anexo1Form -->
-                {% elif form_class_name == 'Anexo2TutorForm' %}
-                    <div class="row">
-                        <div class="col-12 col-md-12">
-                            {{ form.director_tesis|as_crispy_field }}
-                        </div>
-                        <div class="col-12 col-md-12">
-                            {{ form.codirector_tesis|as_crispy_field }}
-                        </div>
-                        <div class="col-12 col-md-12">
-                            {{ form.revisor_tesis|as_crispy_field }}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12 col-md-12">
-                            {{ form.nombre_tesis|as_crispy_field }}
-                        </div>
-                        <div class="col-12 col-md-12">
-                            {{ form.avance_tesis|as_crispy_field }}
-                        </div>
-              
-                    </div>
-
-                    <div class="row">
-                        <div class="col-12 col-md-12">
-                            {{ form.cambio_tema_tesis|as_crispy_field }}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12 col-md-12">
-                            {{ form.cambio_director_tesis|as_crispy_field }}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12 col-md-12">
-                            {{ form.cambio_director_detalle|as_crispy_field }}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12 col-md-12">
-                            {{ form.tesis_registrada_conacyt|as_crispy_field }}
-                        </div>
-                    </div>
-
-                    <label class="form-label">
-                        Calificaciones obtenidas hasta el momento
-                    </label>
-                    <div class="table-responsive">
-
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>Materia</th>
-                                    <th>Calificación 1</th>
-                                    <th>Calificación 2</th>
-                                    <th>Promedio</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>{{ form.materia1|as_crispy_field }}</td>
-                                    <td>{{ form.calificacion1_materia1|as_crispy_field }}</td>
-                                    <td>{{ form.calificacion2_materia1|as_crispy_field }}</td>
-                                    <td>{{ form.promedio_materia1|as_crispy_field }}</td>
-                                </tr>
-                                <tr>
-                                    <td>{{ form.materia2|as_crispy_field }}</td>
-                                    <td>{{ form.calificacion1_materia2|as_crispy_field }}</td>
-                                    <td>{{ form.calificacion2_materia2|as_crispy_field }}</td>
-                                    <td>{{ form.promedio_materia2|as_crispy_field }}</td>
-                                </tr>
-                                <tr>
-                                    <td>{{ form.materia3|as_crispy_field }}</td>
-                                    <td>{{ form.calificacion1_materia3|as_crispy_field }}</td>
-                                    <td>{{ form.calificacion2_materia3|as_crispy_field }}</td>
-                                    <td>{{ form.promedio_materia3|as_crispy_field }}</td>
-                                </tr>
-                                <tr>
-                                    <td>{{ form.materia4|as_crispy_field }}</td>
-                                    <td>{{ form.calificacion1_materia4|as_crispy_field }}</td>
-                                    <td>{{ form.calificacion2_materia4|as_crispy_field }}</td>
-                                    <td>{{ form.promedio_materia4|as_crispy_field }}</td>
-                                </tr>
-                                <tr>
-                                    <td>{{ form.materia5|as_crispy_field }}</td>
-                                    <td>{{ form.calificacion1_materia5|as_crispy_field }}</td>
-                                    <td>{{ form.calificacion2_materia5|as_crispy_field }}</td>
-                                    <td>{{ form.promedio_materia5|as_crispy_field }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-12 col-md-12">
-                            {{ form.dificultad_materia|as_crispy_field }}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12 col-md-12">
-                            {{ form.dificultad_materia|as_crispy_field }}
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-12 col-md-12">
-                            {{ form.dificultad_aprendizaje_profesor|as_crispy_field }}
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-12 col-md-12">
-                            {{ form.conocimientos_previos|as_crispy_field }}
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-12 col-md-12">
-                            {{ form.observaciones_tutor|as_crispy_field }}
-                        </div>
-                    </div>
-
-
-                    <!-- Tarjeta adicional para Acciones y Observaciones Generales -->
-                    <div class="card mt-4">
-                        <div class="card-header">
-                            Acciones y Observaciones Generales
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-12 col-md-12">
-                                    {{ form.estado|as_crispy_field }}
-                                </div>
-                                <div class="col-12 col-md-12">
-                                    {{ form.observaciones|as_crispy_field }}
-                                </div>
-                                <div class="col-12 col-md-12">
-                                    {{ form.archivo|as_crispy_field }}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                {% elif form_class_name == 'Anexo2Form' %}
-                    <!-- Código específico para Anexo2Form -->
-                {% elif form_class_name == 'Anexo3TutorForm' %}
-                <div class="row">
-                    <div class="col-12 col-md-12">
-                        {{ form.domicilio|as_crispy_field }}
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-12 col-md-6">
-                        {{ form.telefono_casa|as_crispy_field }}
-                    </div>
-                    <div class="col-12 col-md-6">
-                        {{ form.correo_electronico1|as_crispy_field }}
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-12 col-md-6">
-                        {{ form.telefono_celular|as_crispy_field }}
-                    </div>
-                    <div class="col-12 col-md-6">
-                        {{ form.correo_electronico2|as_crispy_field }}
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-12 col-md-6">
-                        {{ form.fecha_nacimiento|as_crispy_field }}
-                    </div>
-                    <div class="col-12 col-md-6">
-                        {{ form.lugar_nacimiento|as_crispy_field }}
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-12 col-md-12">
-                        {{ form.curp|as_crispy_field }}
-                    </div>
-                    <div class="col-12 col-md-6">
-                        {{ form.estado_civil|as_crispy_field }}
-                    </div>
-                    <div class="col-12 col-md-6">
-                        {{ form.dependientes_economicos|as_crispy_field }}
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-12 col-md-12">
-                        {{ form.licenciatura|as_crispy_field }}
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-12 col-md-12">
-                        {{ form.institucion_licenciatura|as_crispy_field }}
-                    </div>
-                    <div class="col-12 col-md-3">
-                        {{ form.promedio_licenciatura|as_crispy_field }}
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-12 col-md-12">
-                        {{ form.opcion_titulacion|as_crispy_field }}
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-12 col-md-12">
-                        {{ form.nombre_tesis|as_crispy_field }}
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-12 col-md-3">
-                        {{ form.idioma_ingles_toefl|as_crispy_field }}
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-12 col-md-12">
-                        {{ form.beca_tipo|as_crispy_field }}
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-12 col-md-12">
-                        {{ form.observaciones_anexo1|as_crispy_field }}
-                    </div>
-                </div>
-
-                <!-- Tarjeta adicional para Acciones y Observaciones Generales -->
-                <div class="card mt-4">
-                    <div class="card-header">
-                        Acciones y Observaciones Generales
-                    </div>
-                    <div class="card-body">
+                    {% if form_class_name == 'Anexo1TutorForm' %}
                         <div class="row">
                             <div class="col-12 col-md-12">
-                                {{ form.estado|as_crispy_field }}
+                                {{ form.domicilio|as_crispy_field }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 col-md-6">
+                                {{ form.telefono_casa|as_crispy_field }}
+                            </div>
+                            <div class="col-12 col-md-6">
+                                {{ form.correo_electronico1|as_crispy_field }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 col-md-6">
+                                {{ form.telefono_celular|as_crispy_field }}
+                            </div>
+                            <div class="col-12 col-md-6">
+                                {{ form.correo_electronico2|as_crispy_field }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 col-md-6">
+                                {{ form.fecha_nacimiento|as_crispy_field }}
+                            </div>
+                            <div class="col-12 col-md-6">
+                                {{ form.lugar_nacimiento|as_crispy_field }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 col-md-12">
+                                {{ form.curp|as_crispy_field }}
+                            </div>
+                            <div class="col-12 col-md-6">
+                                {{ form.estado_civil|as_crispy_field }}
+                            </div>
+                            <div class="col-12 col-md-6">
+                                {{ form.dependientes_economicos|as_crispy_field }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 col-md-12">
+                                {{ form.licenciatura|as_crispy_field }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 col-md-12">
+                                {{ form.institucion_licenciatura|as_crispy_field }}
+                            </div>
+                            <div class="col-12 col-md-3">
+                                {{ form.promedio_licenciatura|as_crispy_field }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 col-md-12">
+                                {{ form.opcion_titulacion|as_crispy_field }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 col-md-12">
+                                {{ form.nombre_tesis|as_crispy_field }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 col-md-3">
+                                {{ form.idioma_ingles_toefl|as_crispy_field }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 col-md-12">
+                                {{ form.beca_tipo|as_crispy_field }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 col-md-12">
+                                {{ form.observaciones_anexo1|as_crispy_field }}
+                            </div>
+                        </div>
+
+                        <!-- Tarjeta adicional para Acciones y Observaciones Generales -->
+                        <div class="card mt-4">
+                            <div class="card-header">
+                                Acciones y Observaciones Generales
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-12 col-md-12">
+                                        {{ form.estado|as_crispy_field }}
+                                    </div>
+                                    <div class="col-12 col-md-12">
+                                        {{ form.observaciones|as_crispy_field }}
+                                    </div>
+                                    <div class="col-12 col-md-12">
+                                        {{ form.archivo|as_crispy_field }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% elif form_class_name == 'Anexo1Form' %}
+
+
+
+
+                    {% elif form_class_name == 'Anexo2TutorForm' %}
+                        <div class="row">
+                            <div class="col-12 col-md-12">
+                                {{ form.director_tesis|as_crispy_field }}
                             </div>
                             <div class="col-12 col-md-12">
-                                {{ form.observaciones|as_crispy_field }}
+                                {{ form.codirector_tesis|as_crispy_field }}
                             </div>
                             <div class="col-12 col-md-12">
-                                {{ form.archivo|as_crispy_field }}
+                                {{ form.revisor_tesis|as_crispy_field }}
                             </div>
                         </div>
-                    </div>
-                </div>
-            {% elif form_class_name == 'Anexo1Form' %}
-                <!-- Código específico para Anexo1Form -->
-            {% elif form_class_name == 'Anexo2TutorForm' %}
-                    <div class="row">
-                        <div class="col-12 col-md-12">
-                            {{ form.director_tesis|as_crispy_field }}
+                        <div class="row">
+                            <div class="col-12 col-md-12">
+                                {{ form.nombre_tesis|as_crispy_field }}
+                            </div>
+                            <div class="col-12 col-md-12">
+                                {{ form.avance_tesis|as_crispy_field }}
+                            </div>
+                
                         </div>
-                        <div class="col-12 col-md-12">
-                            {{ form.codirector_tesis|as_crispy_field }}
-                        </div>
-                        <div class="col-12 col-md-12">
-                            {{ form.revisor_tesis|as_crispy_field }}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12 col-md-12">
-                            {{ form.nombre_tesis|as_crispy_field }}
-                        </div>
-                        <div class="col-12 col-md-12">
-                            {{ form.avance_tesis|as_crispy_field }}
-                        </div>
-            
-                    </div>
 
-                    <div class="row">
-                        <div class="col-12 col-md-12">
-                            {{ form.cambio_tema_tesis|as_crispy_field }}
+                        <div class="row">
+                            <div class="col-12 col-md-12">
+                                {{ form.cambio_tema_tesis|as_crispy_field }}
+                            </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12 col-md-12">
-                            {{ form.cambio_director_tesis|as_crispy_field }}
+                        <div class="row">
+                            <div class="col-12 col-md-12">
+                                {{ form.cambio_director_tesis|as_crispy_field }}
+                            </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12 col-md-12">
-                            {{ form.cambio_director_detalle|as_crispy_field }}
+                        <div class="row">
+                            <div class="col-12 col-md-12">
+                                {{ form.cambio_director_detalle|as_crispy_field }}
+                            </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12 col-md-12">
-                            {{ form.tesis_registrada_conacyt|as_crispy_field }}
+                        <div class="row">
+                            <div class="col-12 col-md-12">
+                                {{ form.tesis_registrada_conacyt|as_crispy_field }}
+                            </div>
                         </div>
-                    </div>
 
-                    <label class="form-label">
-                        Calificaciones obtenidas hasta el momento
-                    </label>
-                    <div class="table-responsive">
+                        <label class="form-label">
+                            Calificaciones obtenidas hasta el momento
+                        </label>
+                        <div class="table-responsive">
 
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>Materia</th>
-                                    <th>Calificación 1</th>
-                                    <th>Calificación 2</th>
-                                    <th>Promedio</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>{{ form.materia1|as_crispy_field }}</td>
-                                    <td>{{ form.calificacion1_materia1|as_crispy_field }}</td>
-                                    <td>{{ form.calificacion2_materia1|as_crispy_field }}</td>
-                                    <td>{{ form.promedio_materia1|as_crispy_field }}</td>
-                                </tr>
-                                <tr>
-                                    <td>{{ form.materia2|as_crispy_field }}</td>
-                                    <td>{{ form.calificacion1_materia2|as_crispy_field }}</td>
-                                    <td>{{ form.calificacion2_materia2|as_crispy_field }}</td>
-                                    <td>{{ form.promedio_materia2|as_crispy_field }}</td>
-                                </tr>
-                                <tr>
-                                    <td>{{ form.materia3|as_crispy_field }}</td>
-                                    <td>{{ form.calificacion1_materia3|as_crispy_field }}</td>
-                                    <td>{{ form.calificacion2_materia3|as_crispy_field }}</td>
-                                    <td>{{ form.promedio_materia3|as_crispy_field }}</td>
-                                </tr>
-                                <tr>
-                                    <td>{{ form.materia4|as_crispy_field }}</td>
-                                    <td>{{ form.calificacion1_materia4|as_crispy_field }}</td>
-                                    <td>{{ form.calificacion2_materia4|as_crispy_field }}</td>
-                                    <td>{{ form.promedio_materia4|as_crispy_field }}</td>
-                                </tr>
-                                <tr>
-                                    <td>{{ form.materia5|as_crispy_field }}</td>
-                                    <td>{{ form.calificacion1_materia5|as_crispy_field }}</td>
-                                    <td>{{ form.calificacion2_materia5|as_crispy_field }}</td>
-                                    <td>{{ form.promedio_materia5|as_crispy_field }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Materia</th>
+                                        <th>Calificación 1</th>
+                                        <th>Calificación 2</th>
+                                        <th>Promedio</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>{{ form.materia1|as_crispy_field }}</td>
+                                        <td>{{ form.calificacion1_materia1|as_crispy_field }}</td>
+                                        <td>{{ form.calificacion2_materia1|as_crispy_field }}</td>
+                                        <td>{{ form.promedio_materia1|as_crispy_field }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>{{ form.materia2|as_crispy_field }}</td>
+                                        <td>{{ form.calificacion1_materia2|as_crispy_field }}</td>
+                                        <td>{{ form.calificacion2_materia2|as_crispy_field }}</td>
+                                        <td>{{ form.promedio_materia2|as_crispy_field }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>{{ form.materia3|as_crispy_field }}</td>
+                                        <td>{{ form.calificacion1_materia3|as_crispy_field }}</td>
+                                        <td>{{ form.calificacion2_materia3|as_crispy_field }}</td>
+                                        <td>{{ form.promedio_materia3|as_crispy_field }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>{{ form.materia4|as_crispy_field }}</td>
+                                        <td>{{ form.calificacion1_materia4|as_crispy_field }}</td>
+                                        <td>{{ form.calificacion2_materia4|as_crispy_field }}</td>
+                                        <td>{{ form.promedio_materia4|as_crispy_field }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>{{ form.materia5|as_crispy_field }}</td>
+                                        <td>{{ form.calificacion1_materia5|as_crispy_field }}</td>
+                                        <td>{{ form.calificacion2_materia5|as_crispy_field }}</td>
+                                        <td>{{ form.promedio_materia5|as_crispy_field }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
 
-                    <div class="row">
-                        <div class="col-12 col-md-12">
-                            {{ form.dificultad_materia|as_crispy_field }}
+                        <div class="row">
+                            <div class="col-12 col-md-12">
+                                {{ form.dificultad_materia|as_crispy_field }}
+                            </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12 col-md-12">
-                            {{ form.dificultad_materia|as_crispy_field }}
+                        <div class="row">
+                            <div class="col-12 col-md-12">
+                                {{ form.dificultad_materia|as_crispy_field }}
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="row">
-                        <div class="col-12 col-md-12">
-                            {{ form.dificultad_aprendizaje_profesor|as_crispy_field }}
+                        <div class="row">
+                            <div class="col-12 col-md-12">
+                                {{ form.dificultad_aprendizaje_profesor|as_crispy_field }}
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="row">
-                        <div class="col-12 col-md-12">
-                            {{ form.conocimientos_previos|as_crispy_field }}
+                        <div class="row">
+                            <div class="col-12 col-md-12">
+                                {{ form.conocimientos_previos|as_crispy_field }}
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="row">
-                        <div class="col-12 col-md-12">
-                            {{ form.observaciones_tutor|as_crispy_field }}
+                        <div class="row">
+                            <div class="col-12 col-md-12">
+                                {{ form.observaciones_tutor|as_crispy_field }}
+                            </div>
                         </div>
-                    </div>
 
 
-                    <!-- Tarjeta adicional para Acciones y Observaciones Generales -->
-                    <div class="card mt-4">
-                        <div class="card-header">
-                            Acciones y Observaciones Generales
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-12 col-md-12">
-                                    {{ form.estado|as_crispy_field }}
-                                </div>
-                                <div class="col-12 col-md-12">
-                                    {{ form.observaciones|as_crispy_field }}
-                                </div>
-                                <div class="col-12 col-md-12">
-                                    {{ form.archivo|as_crispy_field }}
+                        <!-- Tarjeta adicional para Acciones y Observaciones Generales -->
+                        <div class="card mt-4">
+                            <div class="card-header">
+                                Acciones y Observaciones Generales
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-12 col-md-12">
+                                        {{ form.estado|as_crispy_field }}
+                                    </div>
+                                    <div class="col-12 col-md-12">
+                                        {{ form.observaciones|as_crispy_field }}
+                                    </div>
+                                    <div class="col-12 col-md-12">
+                                        {{ form.archivo|as_crispy_field }}
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                
-                {% elif form_class_name == 'Anexo3Form' %}
-                    <!-- Código específico para Anexo3Form -->
-                {% else %}
-                    {{ form|crispy }}
-                {% endif %}
-                
+
+                    {% elif form_class_name == 'Anexo2Form' %}
+                            <!-- Código específico para Anexo2Form -->
+
+
+
+                    {% elif form_class_name == 'Anexo3TutorForm' %}
+
+                    
+
+        
+
+                        
+                    {% elif form_class_name == 'Anexo3Form' %}
+                            <!-- Código específico para Anexo3Form -->
+                    {% else %}
+                        {{ form|crispy }}
+                    {% endif %}
+                    
                 <button type="submit" class="btn btn-success">Guardar</button>
             </div>
         </div>
