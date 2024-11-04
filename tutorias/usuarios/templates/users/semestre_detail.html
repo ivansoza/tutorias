@@ -39,7 +39,7 @@
                     {% else %}
                         <span class="badge bg-warning text-dark"><i class="fas fa-hourglass-half"></i> En proceso</span>
                     {% endif %}
-
+    
                     <!-- Mostrar fechas si están disponibles -->
                     {% if value.anexo.fecha_creacion %}
                         <p><strong>Creación:</strong> {{ value.anexo.fecha_creacion|date:"d/m/Y H:i" }}</p>
@@ -47,13 +47,19 @@
                     {% if value.anexo.fecha_finalizacion %}
                         <p><strong>Finalización:</strong> {{ value.anexo.fecha_finalizacion|date:"d/m/Y H:i" }}</p>
                     {% endif %}
-
+    
                     <div class="mt-3">
                         {% if value.puede_acceder %}
                             <a href="{% url 'anexo-detail' alumno.id semestre.numero key %}" class="btn btn-primary">Ver {{ key }}</a>
                         {% else %}
                             <button class="btn btn-secondary" disabled>Acceso Restringido</button>
-                            <small class="text-danger d-block">Completa los anexos anteriores</small>
+                            <div class="mt-2">
+                                <strong class="text-danger">Completa los anexos anteriores:</strong>
+                                <ul class="text-left mt-1">
+                                    <li>Sube el documento del anexo escaneado.</li>
+                                    <li>Asegúrate de que el anexo esté en estado <strong>Revisado</strong>.</li>
+                                </ul>
+                            </div>
                         {% endif %}
                     </div>
                 </div>
@@ -61,5 +67,6 @@
         </div>
         {% endfor %}
     </div>
+    
 </div>
 {% endblock %}

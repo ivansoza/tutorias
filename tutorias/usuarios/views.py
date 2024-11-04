@@ -380,7 +380,7 @@ def asignar_tutor(request):
 
 # views.py
 
-class AlumnoDetailView(DetailView):
+class AlumnoDetailView(LoginRequiredMixin, DetailView):
     model = CustomUser
     template_name = 'alumno_detail.html'
     context_object_name = 'alumno'
@@ -481,9 +481,15 @@ class IniciarSemestreView(LoginRequiredMixin, View):
             semestre.save()
 
             # Crear los anexos asociados al semestre
-            Anexo1.objects.create(semestre=semestre, alumno=alumno, tutor=tutor_alumno.tutor)
-            Anexo2.objects.create(semestre=semestre, alumno=alumno, tutor=tutor_alumno.tutor)
-            Anexo3.objects.create(semestre=semestre, alumno=alumno, tutor=tutor_alumno.tutor)
+            if semestre.numero == 1:
+                # Semestre 1: crear Anexo1, Anexo2 y Anexo3
+                Anexo1.objects.create(semestre=semestre, alumno=alumno, tutor=tutor_alumno.tutor)
+                Anexo2.objects.create(semestre=semestre, alumno=alumno, tutor=tutor_alumno.tutor)
+                Anexo3.objects.create(semestre=semestre, alumno=alumno, tutor=tutor_alumno.tutor)
+            else:
+                # Semestres posteriores: crear solo Anexo2 y Anexo3
+                Anexo2.objects.create(semestre=semestre, alumno=alumno, tutor=tutor_alumno.tutor)
+                Anexo3.objects.create(semestre=semestre, alumno=alumno, tutor=tutor_alumno.tutor)
 
             messages.success(request, f"Semestre {semestre.numero} iniciado para {alumno.get_full_name()} y anexos creados.")
         else:
@@ -543,26 +549,52 @@ class SemestreDetailView(DetailView):
         semestre = self.get_object()
         alumno = semestre.alumno
 
+        estados_anexos = {}
+
         # Obtener los anexos asociados al semestre
-        anexo1 = Anexo1.objects.get(semestre=semestre)
-        anexo2 = Anexo2.objects.get(semestre=semestre)
-        anexo3 = Anexo3.objects.get(semestre=semestre)
+        anexo1_existe = False
+        try:
+            anexo1 = Anexo1.objects.get(semestre=semestre)
+            anexo1_existe = True
+        except Anexo1.DoesNotExist:
+            anexo1 = None
+
+        try:
+            anexo2 = Anexo2.objects.get(semestre=semestre)
+        except Anexo2.DoesNotExist:
+            anexo2 = None
+
+        try:
+            anexo3 = Anexo3.objects.get(semestre=semestre)
+        except Anexo3.DoesNotExist:
+            anexo3 = None
 
         # Determinar si se puede acceder a cada anexo
-        estados_anexos = {
-            'Anexo1': {
+        if anexo1_existe:
+            # Semestre 1
+            estados_anexos['Anexo1'] = {
                 'puede_acceder': True,
                 'anexo': anexo1,
-            },
-            'Anexo2': {
+            }
+            estados_anexos['Anexo2'] = {
                 'puede_acceder': anexo1.estado == EstadoAnexo.REVISADO and anexo1.archivo,
                 'anexo': anexo2,
-            },
-            'Anexo3': {
-                'puede_acceder': anexo1.estado == EstadoAnexo.REVISADO and anexo2.estado == EstadoAnexo.REVISADO and anexo2.archivo,
+            }
+            estados_anexos['Anexo3'] = {
+                'puede_acceder': (anexo1.estado == EstadoAnexo.REVISADO and anexo2.estado == EstadoAnexo.REVISADO and anexo2.archivo),
                 'anexo': anexo3,
-            },
-        }
+            }
+        else:
+            # Semestres posteriores
+            estados_anexos['Anexo2'] = {
+                'puede_acceder': True,
+                'anexo': anexo2,
+            }
+            estados_anexos['Anexo3'] = {
+                'puede_acceder': anexo2.estado == EstadoAnexo.REVISADO and anexo2.archivo,
+                'anexo': anexo3,
+            }
+
         context['estados_anexos'] = estados_anexos
         context['alumno'] = alumno
 
