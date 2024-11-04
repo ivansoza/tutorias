@@ -272,11 +272,96 @@
 
                     {% elif form_class_name == 'Anexo3TutorForm' %}
 
+                        <div class="row">
+                            <div class="col-12 col-md-12">
+                                {{ form.director_tesis|as_crispy_field }}
+                            </div>
+                            <div class="col-12 col-md-12">
+                                {{ form.codirector_tesis|as_crispy_field }}
+                            </div>
+                            <div class="col-12 col-md-12">
+                                {{ form.revisor_tesis|as_crispy_field }}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12 col-md-12">
+                                {{ form.nombre_tesis|as_crispy_field }}
+                            </div>
+                            <div class="col-12 col-md-12">
+                                {{ form.avance_tesis|as_crispy_field }}
+                            </div>
+                        </div>
+
+                        <label class="form-label">
+                            Calificaciones obtenidas hasta el momento
+                        </label>
+                        <div class="table-responsive">
+
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Materia</th>
+                                        <th>Calificación</th>
+              
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>{{ form.materia1|as_crispy_field }}</td>
+                                        <td>{{ form.calificacion_materia1|as_crispy_field }}</td>
                     
+                                    </tr>
+                                    <tr>
+                                        <td>{{ form.materia2|as_crispy_field }}</td>
+                                        <td>{{ form.calificacion_materia2|as_crispy_field }}</td>
+            
+                                    </tr>
+                                    <tr>
+                                        <td>{{ form.materia3|as_crispy_field }}</td>
+                                        <td>{{ form.calificacion_materia3|as_crispy_field }}</td>
+   
+                                    </tr>
+                                    <tr>
+                                        <td>{{ form.materia4|as_crispy_field }}</td>
+                                        <td>{{ form.calificacion_materia4|as_crispy_field }}</td>
 
-        
+                                    </tr>
+                                    <tr>
+                                        <td>{{ form.materia5|as_crispy_field }}</td>
+                                        <td>{{ form.calificacion_materia5|as_crispy_field }}</td>
+  
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
 
-                        
+
+                        <div class="row">
+                            <div class="col-12 col-md-12">
+                                {{ form.observaciones_tutor|as_crispy_field }}
+                            </div>
+                        </div>
+
+
+                        <div class="card mt-4">
+                            <div class="card-header">
+                                Acciones y Observaciones Generales
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-12 col-md-12">
+                                        {{ form.estado|as_crispy_field }}
+                                    </div>
+                                    <div class="col-12 col-md-12">
+                                        {{ form.observaciones|as_crispy_field }}
+                                    </div>
+                                    <div class="col-12 col-md-12">
+                                        {{ form.archivo|as_crispy_field }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     {% elif form_class_name == 'Anexo3Form' %}
                             <!-- Código específico para Anexo3Form -->
                     {% else %}

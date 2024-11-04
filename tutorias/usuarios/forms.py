@@ -356,3 +356,70 @@ class Anexo3TutorForm(forms.ModelForm):
     class Meta:
         model = Anexo3
         exclude = ['semestre', 'alumno', 'tutor', 'fecha_creacion', 'fecha_finalizacion']
+
+    def __init__(self, *args, **kwargs):
+        super(Anexo3TutorForm, self).__init__(*args, **kwargs)
+
+        self.fields['director_tesis'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': 'Seleccione el Director de Tesis'
+        })
+        self.fields['codirector_tesis'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': 'Seleccione el Codirector de Tesis'
+        })
+        self.fields['revisor_tesis'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': 'Seleccione el Revisor de Tesis'
+        })
+
+
+        self.fields['nombre_tesis'].widget.attrs.update({
+            'placeholder': 'Ingrese el nombre de la tesis',
+            'rows': 2
+        })
+        self.fields['avance_tesis'].widget.attrs.update({
+            'placeholder': 'Ingrese el avance en %'
+        })
+
+        self.fields['materia1'].widget.attrs.update({
+            'placeholder': 'Ingrese el nombre de la Materia 1'
+        })
+
+        self.fields['materia2'].widget.attrs.update({
+            'placeholder': 'Ingrese el nombre de la Materia 2'
+        })
+
+        self.fields['materia3'].widget.attrs.update({
+            'placeholder': 'Ingrese el nombre de la Materia 3'
+        })
+
+        self.fields['materia4'].widget.attrs.update({
+            'placeholder': 'Ingrese el nombre de la Materia 4'
+        })
+
+        self.fields['materia5'].widget.attrs.update({
+            'placeholder': 'Ingrese el nombre de la Materia 5'
+        })
+
+        self.fields['calificacion_materia1'].widget.attrs.update({
+            'placeholder': 'Calificación  de Materia 1'
+        })
+        self.fields['calificacion_materia2'].widget.attrs.update({
+            'placeholder': 'Calificación  de Materia 2'
+        })
+        self.fields['calificacion_materia3'].widget.attrs.update({
+            'placeholder': 'Calificación  de Materia 3'
+        })
+        self.fields['calificacion_materia4'].widget.attrs.update({
+            'placeholder': 'Calificación  de Materia 4'
+        })
+
+        self.fields['calificacion_materia5'].widget.attrs.update({
+            'placeholder': 'Calificación  de Materia 5'
+        })
+
+        self.fields['observaciones_tutor'].widget.attrs.update({
+            'placeholder': 'Observaciones adicionales del tutor',
+            'rows': 2
+        })
