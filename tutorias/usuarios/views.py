@@ -1,4 +1,6 @@
 from django.utils import timezone
+from django.templatetags.static import static
+
 from django.shortcuts import render
 from django.views.generic import ListView, View
 from django.contrib.auth.models import Group
@@ -29,6 +31,9 @@ from django.http import HttpResponseForbidden
 from django.http import Http404
 from django.http import HttpResponseRedirect
 from django.views.generic.edit import UpdateView
+from django.template.loader import render_to_string
+from django.http import HttpResponse
+import weasyprint  # Asumiendo que usas WeasyPrint para generar PDFs
 
 from django.shortcuts import get_object_or_404, redirect
 
@@ -766,3 +771,46 @@ class AnexoEditView(LoginRequiredMixin, UpdateView):
             return redirect('anexo-detail', alumno_id=anexo.alumno.id, semestre_numero=anexo.semestre.numero, anexo_nombre=self.kwargs['anexo_nombre'])
 
         return super().dispatch(request, *args, **kwargs)
+    
+
+class GenerarAnexoPDFView(View):
+    def get(self, request, alumno_id, semestre_numero, anexo_nombre):
+        alumno = get_object_or_404(CustomUser, id=alumno_id)
+        semestre = get_object_or_404(Semestre, alumno=alumno, numero=semestre_numero)
+        marca_agua_url = request.build_absolute_uri(static('img/escudo.png'))
+        try:
+            tutor_alumno = alumno.tutor_asignado  # Accede a TutorAlumno mediante related_name
+            tutor = tutor_alumno.tutor
+        except TutorAlumno.DoesNotExist:
+            tutor = None  # Si no existe, asigna None
+
+        # Obtener el anexo correspondiente
+        if anexo_nombre == 'Anexo1':
+            anexo = get_object_or_404(Anexo1, semestre=semestre)
+            template_name = 'pdf/anexo1_pdf.html'
+        elif anexo_nombre == 'Anexo2':
+            anexo = get_object_or_404(Anexo2, semestre=semestre)
+            template_name = 'pdf/anexo2_pdf.html'
+        elif anexo_nombre == 'Anexo3':
+            anexo = get_object_or_404(Anexo3, semestre=semestre)
+            template_name = 'pdf/anexo3_pdf.html'
+        else:
+            raise Http404("Anexo no encontrado")
+
+        # Renderizar el PDF
+        html_string = render_to_string(template_name, {
+            'anexo': anexo,
+            'alumno': alumno,
+            'semestre': semestre,
+            'marca_agua': marca_agua_url,  # Agregamos la URL de la marca de agua al contexto
+            'tutor': tutor,  # Agregamos el tutor al contexto
+
+
+        })
+
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = f'filename="{anexo_nombre}_semestre_{semestre.numero}_{alumno.get_full_name()}.pdf"'
+
+        # Generar el PDF
+        weasyprint.HTML(string=html_string).write_pdf(response)
+        return response

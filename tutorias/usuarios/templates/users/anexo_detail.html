@@ -30,7 +30,10 @@
             {% if puede_editar_anexo %}
                 <div class="mt-3">
                     <a href="{% url 'anexo-edit' alumno.id semestre.numero anexo_nombre %}" class="btn btn-primary">Editar {{ anexo_nombre }}</a>
-                    <a href="#" class="btn btn-danger"><i class="fas fa-file-pdf"></i> Generar PDF</a>
+                    <a href="{% url 'generar_anexo_pdf' alumno.id semestre.numero anexo_nombre %}" target="_blank" class="btn btn-danger">
+                        <i class="fas fa-file-pdf"></i> Generar PDF
+                    </a>
+                
                 </div>
             {% endif %}
         </div>

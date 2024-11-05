@@ -1,0 +1,484 @@
+{% extends "anexos/baseanexo.html" %}
+{% block content %}
+
+<style>
+    .container {
+        margin-top: 20px;
+        padding: 20px;
+        font-size: 18px; /* Tamaño del texto */
+    }
+
+    .nombre-linea {
+        display: flex; /* Alinea el texto y la línea en una sola fila */
+        align-items: center;
+        gap: 10px; /* Espacio entre "Nombre" y la línea */
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    .input-container {
+        position: relative;
+        flex-grow: 1;
+        border-bottom: 1px solid black; /* Línea negra debajo */
+        height: 25px; /* Asegura altura fija para la línea */
+    }
+
+
+    .input-container-corto {
+        position: relative;
+        width: 100px; /* Controla la longitud de la línea */
+        border-bottom: 1px solid black; /* Línea negra debajo */
+        height: 25px; /* Asegura altura fija para la línea */
+    }
+    .input-container-medio {
+        position: relative;
+        width: 500px; /* Controla la longitud de la línea */
+        border-bottom: 1px solid black; /* Línea negra debajo */
+        height: 25px; /* Asegura altura fija para la línea */
+    }
+
+
+    .input-container.corto {
+        width: 200px; /* Ajusta la longitud de la línea */
+    }
+
+    
+
+    .input-over-line {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        border: none;
+        outline: none;
+        background: transparent;
+        font-size: 18px;
+        padding: 0 15px; 
+        white-space: normal; 
+        word-wrap: break-word; 
+        overflow-wrap: break-word; 
+        
+    }
+
+
+    .input-group {
+        display: flex;
+        align-items: center;
+        gap: 10px; /* Espacio entre los elementos */
+        margin-bottom: 10px; /* Espacio entre filas */
+    } 
+
+
+    .observaciones {
+            position: relative;
+            margin-top: 10px;
+        }
+
+        .observaciones::before {
+            content: "Observaciones:";
+            display: block;
+            margin-bottom: 30px;
+        }
+
+        .tesis {
+            position: relative;
+            margin-top: 10px;
+        }
+
+        .tesis::before {
+            content: "Nombre de la tesis:";
+            display: block;
+            margin-bottom: 30px;
+        }
+
+        .tesis-new {
+            position: relative;
+            margin-top: 10px;
+        }
+
+        .tesis-new::before {
+            content: "¿Ha hecho cambio de director de tesis? (especifique):";
+            display: block;
+            margin-bottom: 30px;
+        }
+        .materias-info {
+            position: relative;
+            margin-top: 10px;
+        }
+
+        .materias-info::before {
+            content: "¿Tiene dificultad alta con alguna(s) materia(s)? Mencione cual(es):";
+            display: block;
+            margin-bottom: 30px;
+        }
+
+        .dificultad-info {
+            position: relative;
+            margin-top: 10px;
+        }
+
+        .dificultad-info::before {
+            content: "¿Considera que la dificultad en el aprendizaje se debe al profesor? Explique:";
+            display: block;
+            margin-bottom: 30px;
+        }
+
+        .conocimientos-info {
+            position: relative;
+            margin-top: 10px;
+        }
+
+        .conocimientos-info::before {
+            content: "¿Considera que no tiene los conocimientos previos para cursar alguna de las materias del programa? Explique:";
+            display: block;
+            margin-bottom: 30px;
+        }
+
+        .observaciones-info {
+            position: relative;
+            margin-top: 10px;
+        }
+
+        .observaciones-info::before {
+            content: "Observaciones del tutor sobre el desempeño del estudiante :";
+            display: block;
+            margin-bottom: 30px;
+        }
+
+
+
+
+        .lines {
+            position: relative;
+            height: 80px; /* Ajusta la altura según necesites */
+            background-image: 
+                linear-gradient(to bottom, black 1px, transparent 1px),
+                linear-gradient(to bottom, black 1px, transparent 1px),
+                linear-gradient(to bottom, black 1px, transparent 1px);
+            background-position: 0px 0px, 0px 30px, 0px 60px;
+            background-size: 100% 1px;
+            background-repeat: repeat-x;
+        }
+
+        .lines::before {
+            content: "";
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                linear-gradient(to bottom, black 1px, transparent 1px),
+                linear-gradient(to bottom, black 1px, transparent 1px),
+                linear-gradient(to bottom, black 1px, transparent 1px);
+            background-position: left 0px, left 0px, left 0px;
+            background-size: 100% 1px;
+            background-repeat: repeat-x;
+            top: 0;
+            height: 60px; /* Mismo que .lines */
+        }
+
+        .lines span {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            padding-top: 15px; /* Espacio entre líneas y texto */
+            text-align: justify;
+            /* Ajusta el padding o margin según necesites para alinear el texto */
+        }
+
+        .lines-info {
+            position: relative;
+            height: 80px; /* Ajusta la altura según necesites */
+            background-image: 
+                linear-gradient(to bottom, black 1px, transparent 1px),
+                linear-gradient(to bottom, black 1px, transparent 1px),
+                linear-gradient(to bottom, black 1px, transparent 1px);
+                
+            background-position: 0px 0px, 0px 30px, 0px 60px;
+            background-size: 100% 1px;
+            background-repeat: repeat-x;
+        }
+
+        .lines-info::before {
+            content: "";
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                linear-gradient(to bottom, black 1px, transparent 1px),
+                linear-gradient(to bottom, black 1px, transparent 1px),
+                linear-gradient(to bottom, black 1px, transparent 1px);
+            background-position: left 0px, left 0px, left 0px;
+            background-size: 100% 1px;
+            background-repeat: repeat-x;
+            top: 0;
+            height: 60px; /* Mismo que .lines */
+        }
+
+        .lines-info span {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            padding-top: 15px; /* Espacio entre líneas y texto */
+            text-align: justify;
+            /* Ajusta el padding o margin según necesites para alinear el texto */
+        }
+
+        .observaciones-texto {
+            margin-top: -140px;
+            text-align: justify;
+            white-space: pre-wrap; /* Preserva los espacios y saltos de línea */
+        }
+        .signature-box {
+            text-align: center;
+            font-family: Arial, sans-serif;
+            margin: 190px auto;
+            width: 600px;
+        }
+
+        .line {
+            border-top: 2px solid black;
+            margin: 0 auto 10px auto;
+            width: 60%;
+        }
+
+        .input-container-intermedio {
+            position: relative;
+            width: 250px; /* Controla la longitud de la línea */
+            border-bottom: 1px solid black; /* Línea negra debajo */
+            height: 25px; /* Asegura altura fija para la línea */
+        }
+        .justified-text {
+            text-align: justify; /* Justifica el texto */
+
+        }
+
+
+</style>
+<style>
+    .table-container {
+        width: 100%;
+        margin: 20px auto;
+        font-family: Arial, sans-serif;
+        border-collapse: collapse;
+    }
+
+    table {
+        width: 100%;
+        border: 1px solid black;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        border: 1px solid black;
+        padding: 10px;
+        text-align: center;
+    }
+
+    th {
+        background-color: #f2f2f2;
+        font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+        background-color: #fafafa;
+    }
+</style>
+<div class="header">
+    INSTITUTO TECNOLÓGICO DE APIZACO<br>
+    División de Estudios de Posgrado e Investigación<br>
+    Programa de tutorías
+    <br>
+    ANEXO 2<br>
+    FICHA DE SEGUIMIENTO    <br>
+    (A MITAD DE SEMESTRE)
+</div>
+
+<div class="fecha">
+    Fecha: <span class="linea">15/09/2024</span>
+</div>
+
+<div class="container">
+    <div class="nombre-linea">
+        <span>Nombre:</span>
+        <div class="input-container">
+            <input type="text" class="input-over-line" value="" />
+        </div>
+    </div>
+    <div class="nombre-linea">
+        <span>Semestre:</span>
+        <div class="input-container-intermedio">
+            <input type="text" class="input-over-line" value="" />
+        </div>
+    </div>
+    <div class="nombre-linea">
+        <span>Director de Tesis:</span>
+        <div class="input-container">
+            <input type="text" class="input-over-line" value="" />
+        </div>
+    </div>
+    <div class="nombre-linea">
+        <span>Codirector de Tesis:</span>
+        <div class="input-container">
+            <input type="text" class="input-over-line" value="" />
+        </div>
+    </div>
+    <div class="nombre-linea">
+        <span>Revisor de Tesis:</span>
+        <div class="input-container">
+            <input type="text" class="input-over-line" value="" />
+        </div>
+    </div>
+
+    <div class="tesis">
+        <div class="lines">
+            <!-- Las líneas están creadas mediante CSS de fondo -->
+        </div>
+        <div class="observaciones-texto" contenteditable="true">
+          
+        </div>
+    </div>
+    <div class="nombre-linea" style="margin-top: 50px;">
+        <span>Avance en el trabajo de tesis (%):</span>
+        <div class="input-container-corto">
+            <input type="text" class="input-over-line" value="%" />
+        </div>
+     
+    </div>
+    <div class="justified-text">
+        <p><strong>Nota:</strong> Usar porcentaje acentuado en la hoja de evaluación de desempeño del 
+        Becario (formato CONAHCYT).</p>
+    </div>
+    <div class="nombre-linea">
+        <span>¿Ha hecho cambio en el tema de tesis?:</span>
+        <div class="input-container">
+            <input type="text" class="input-over-line" value="" />
+        </div>
+    </div>
+    
+
+    <div class="tesis-new">
+        <div class="lines">
+            <!-- Las líneas están creadas mediante CSS de fondo -->
+        </div>
+        <div class="observaciones-texto" contenteditable="true">
+          
+        </div>
+    </div>
+    <div class="nombre-linea" style="margin-top:50px">
+        <span>¿Tiene su tesis registrada en plataforma CONAHCYT?:</span>
+        <div class="input-container">
+            <input type="text" class="input-over-line" value="" />
+        </div>
+    </div>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th rowspan="2" style="width: 5%;">#</th>
+                    <th rowspan="2" style="width: 50%;">Materia</th>
+                    <th colspan="2">Calificación</th>
+                    <th rowspan="2" style="width: 15%;">Promedio</th>
+                </tr>
+                <tr>
+                    <th style="width: 15%;">Calificación 1</th>
+                    <th style="width: 15%;">Calificación 2</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<div class="materias-info">
+    <div class="lines">
+        <!-- Las líneas están creadas mediante CSS de fondo -->
+    </div>
+    <div class="observaciones-texto" contenteditable="true">
+      
+    </div>
+</div>
+
+
+<div class="dificultad-info" style="margin-top: 50px;">
+    <div class="lines">
+        <!-- Las líneas están creadas mediante CSS de fondo -->
+    </div>
+    <div class="observaciones-texto" contenteditable="true">
+      
+    </div>
+</div>
+
+
+<div class="conocimientos-info" style="margin-top: 50px;">
+    <div class="lines">
+        <!-- Las líneas están creadas mediante CSS de fondo -->
+    </div>
+    <div class="observaciones-texto" contenteditable="true">
+      
+    </div>
+</div>
+
+
+<div class="observaciones-info" style="margin-top: 50px;">
+    <div class="lines">
+        <!-- Las líneas están creadas mediante CSS de fondo -->
+    </div>
+    <div class="observaciones-texto" contenteditable="true">
+      
+    </div>
+</div>
+
+
+<div class="signature-box">
+    <div class="line"></div>
+    <p><strong>Nombre, fecha y firma del Tutor</strong></p>
+</div>
+
+{% endblock %}

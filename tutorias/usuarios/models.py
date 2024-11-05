@@ -89,6 +89,7 @@ class BaseAnexo(models.Model):
     archivo = models.FileField(upload_to='anexos/%Y/%m/%d/', blank=True, null=True)
     fecha_creacion = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de Creación")
     fecha_finalizacion = models.DateTimeField(blank=True, null=True, verbose_name="Fecha de Finalización")
+    fecha_oficio = models.DateField(verbose_name="Fecha de Anexo", blank=True, null=True)
 
     class Meta:
         abstract = True

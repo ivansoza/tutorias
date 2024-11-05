@@ -5,6 +5,7 @@ from generales.models import Posgrado
 from .models import CustomUser
 from django.contrib.auth.models import Group
 from django.contrib.auth.forms import UserChangeForm
+from django.forms import DateInput
 
 
 from django.contrib.auth import get_user_model
@@ -154,9 +155,27 @@ class Anexo1TutorForm(forms.ModelForm):
         self.fields['correo_electronico2'].widget.attrs.update({
             'placeholder': 'Ingrese el segundo correo electrónico'
         })
-        self.fields['fecha_nacimiento'].widget.attrs.update({
-            'placeholder': 'Seleccione la fecha de nacimiento'
-        })
+      # Configurar el widget de fecha_nacimiento con formato
+        self.fields['fecha_nacimiento'].widget = DateInput(
+            attrs={
+                'type': 'date',  # HTML5 date input
+                'class': 'form-control',  # Agrega clases CSS si es necesario
+            },
+            format='%Y-%m-%d'
+        )
+        self.fields['fecha_nacimiento'].input_formats = ['%Y-%m-%d']
+
+
+        self.fields['fecha_oficio'].widget = DateInput(
+            attrs={
+                'type': 'date',  # HTML5 date input
+                'class': 'form-control',  # Agrega clases CSS si es necesario
+            },
+            format='%Y-%m-%d'
+        )
+        self.fields['fecha_oficio'].input_formats = ['%Y-%m-%d']
+
+
         self.fields['lugar_nacimiento'].widget.attrs.update({
             'placeholder': 'Ingrese el lugar de nacimiento'
         })
