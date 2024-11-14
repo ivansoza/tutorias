@@ -132,6 +132,12 @@
 
                     {% elif form_class_name == 'Anexo2TutorForm' %}
                         <div class="row">
+                            <div class="col-12 col-md-3">
+                                {{ form.fecha_oficio|as_crispy_field }}
+                            </div>
+                        </div>
+                        
+                        <div class="row">
                             <div class="col-12 col-md-12">
                                 {{ form.director_tesis|as_crispy_field }}
                             </div>
@@ -278,7 +284,13 @@
 
 
                     {% elif form_class_name == 'Anexo3TutorForm' %}
+                    <div class="row">
+                        <div class="col-12 col-md-3">
+                            {{ form.fecha_oficio|as_crispy_field }}
+                        </div>
+                    </div>
 
+                    
                         <div class="row">
                             <div class="col-12 col-md-12">
                                 {{ form.director_tesis|as_crispy_field }}

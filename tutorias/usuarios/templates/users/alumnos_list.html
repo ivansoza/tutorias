@@ -88,7 +88,12 @@
 
 
 
+    {% if es_coordinador or es_docente or es_superusuario %}
     <a href="{% url 'register_user' %}" class="btn btn-success">Registrar Alumno</a>
+
+    {% endif %}
+
+
     <div class="card mt-3">
       
         <div class="card-header">
@@ -135,30 +140,39 @@
                             <td>{{ user.posgrado_alumno.nombre|default:"No asignado" }}</td>
                             <td>
                                 <div class="btn-group" role="group" aria-label="Acciones de usuario">
+                                    {% if es_coordinador or es_docente or es_superusuario %}
 
-                                    {% if user.has_tutor %}
-                                    <a href="#" class="btn btn-secondary mr-1" data-bs-toggle="tooltip" data-bs-placement="top" title="Tutor Asignado" onclick="showTutorInfo('{{ user.tutor_name }}', {{ user.id }}, '{{ user.get_full_name|escapejs }}')">
-                                        <i class="fas fa-user-check"></i>
-                                    </a>
-                                                                        {% else %}
-                                    <a href="#" class="btn btn-success mr-1" data-bs-toggle="tooltip" data-bs-placement="top" title="Asignar Tutor" onclick="openTutorModal({{ user.id }}, '{{ user.get_full_name|escapejs }}')">
-                                        <i class="fas fa-user-friends"></i>
-                                    </a>
-                        
+                                    
+                                        {% if user.has_tutor %}
+                                        <a href="#" class="btn btn-secondary mr-1" data-bs-toggle="tooltip" data-bs-placement="top" title="Tutor Asignado" onclick="showTutorInfo('{{ user.tutor_name }}', {{ user.id }}, '{{ user.get_full_name|escapejs }}')">
+                                            <i class="fas fa-user-check"></i>
+                                        </a>
+                                                                                                                {% else %}
+                                        <a href="#" class="btn btn-success mr-1" data-bs-toggle="tooltip" data-bs-placement="top" title="Asignar Tutor" onclick="openTutorModal({{ user.id }}, '{{ user.get_full_name|escapejs }}')">
+                                            <i class="fas fa-user-friends"></i>
+                                        </a>
+                            
+                                        {% endif %}
+
+                                        <a href="{% url 'editar-usuario' user.id %}" class="btn btn-primary mr-1" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        
+                                        <!-- Formulario para eliminar el usuario -->
+                                        <form action="{% url 'eliminar-alumno' user.id %}" method="POST" style="display:inline;" class="delete-form" data-alumno-name="{{ user.get_full_name|escapejs }}">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-danger delete-button" data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                        
                                     {% endif %}
 
-                                    <a href="{% url 'editar-usuario' user.id %}" class="btn btn-primary mr-1" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    
-                                    <!-- Formulario para eliminar el usuario -->
-                                    <form action="{% url 'eliminar-alumno' user.id %}" method="POST" style="display:inline;" class="delete-form" data-alumno-name="{{ user.get_full_name|escapejs }}">
-                                        {% csrf_token %}
-                                        <button type="submit" class="btn btn-danger delete-button" data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </form>
-                                    
+
+
+
+
+
                                     
                                     <a href="{% url 'alumno-detail' user.id %}" class="btn btn-info ml-1" data-bs-toggle="tooltip" data-bs-placement="top" title="Detalles">
                                         <i class="fas fa-info-circle"></i>

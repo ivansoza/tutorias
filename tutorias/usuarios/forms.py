@@ -366,6 +366,15 @@ class Anexo2TutorForm(forms.ModelForm):
             'rows': 2
         })
 
+        self.fields['fecha_oficio'].widget = DateInput(
+            attrs={
+                'type': 'date',  # HTML5 date input
+                'class': 'form-control',  # Agrega clases CSS si es necesario
+            },
+            format='%Y-%m-%d'
+        )
+        self.fields['fecha_oficio'].input_formats = ['%Y-%m-%d']
+
 class Anexo3Form(forms.ModelForm):
     class Meta:
         model = Anexo3
@@ -442,3 +451,12 @@ class Anexo3TutorForm(forms.ModelForm):
             'placeholder': 'Observaciones adicionales del tutor',
             'rows': 2
         })
+
+        self.fields['fecha_oficio'].widget = DateInput(
+            attrs={
+                'type': 'date',  # HTML5 date input
+                'class': 'form-control',  # Agrega clases CSS si es necesario
+            },
+            format='%Y-%m-%d'
+        )
+        self.fields['fecha_oficio'].input_formats = ['%Y-%m-%d']

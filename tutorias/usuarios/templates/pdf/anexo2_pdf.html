@@ -303,83 +303,137 @@
     (A MITAD DE SEMESTRE)
 </div>
 
-<div class="fecha">
-    Fecha: <span class="linea">15/09/2024</span>
-</div>
 
+<div class="fecha">
+
+    {% if anexo.fecha_oficio %}
+    Fecha: <span class="linea">{{ anexo.fecha_oficio|date:"d/m/Y" }}</span>
+
+    {% else %}
+    Fecha: <span class="linea">DD/MM/YYYY</span>
+
+    {% endif %}
+</div>
 <div class="container">
     <div class="nombre-linea">
         <span>Nombre:</span>
         <div class="input-container">
-            <input type="text" class="input-over-line" value="" />
+            <input type="text" class="input-over-line" value="{{alumno.get_full_name|upper}}" />
         </div>
     </div>
     <div class="nombre-linea">
         <span>Semestre:</span>
         <div class="input-container-intermedio">
-            <input type="text" class="input-over-line" value="" />
+            <input type="text" class="input-over-line" value="{{anexo.semestre|upper}}" />
         </div>
     </div>
     <div class="nombre-linea">
         <span>Director de Tesis:</span>
         <div class="input-container">
+            {% if anexo.director_tesis%}
+            <input type="text" class="input-over-line" value="{{anexo.director_tesis|upper}}" />
+            {% else %}
             <input type="text" class="input-over-line" value="" />
+            {% endif %}
         </div>
     </div>
+    <!-- Codirector de Tesis -->
     <div class="nombre-linea">
         <span>Codirector de Tesis:</span>
         <div class="input-container">
-            <input type="text" class="input-over-line" value="" />
+            {% if anexo.codirector_tesis %}
+                <input type="text" class="input-over-line" value="{{ anexo.codirector_tesis|upper }}" />
+            {% else %}
+                <input type="text" class="input-over-line" value="" />
+            {% endif %}
         </div>
     </div>
+
+    <!-- Revisor de Tesis -->
     <div class="nombre-linea">
         <span>Revisor de Tesis:</span>
         <div class="input-container">
-            <input type="text" class="input-over-line" value="" />
+            {% if anexo.revisor_tesis %}
+                <input type="text" class="input-over-line" value="{{ anexo.revisor_tesis|upper }}" />
+            {% else %}
+                <input type="text" class="input-over-line" value="" />
+            {% endif %}
         </div>
     </div>
+
 
     <div class="tesis">
         <div class="lines">
             <!-- Las líneas están creadas mediante CSS de fondo -->
         </div>
-        <div class="observaciones-texto" contenteditable="true">
-          
-        </div>
+
+        {% if anexo.nombre_tesis %}
+            <div class="observaciones-texto" contenteditable="true">
+                    {{anexo.nombre_tesis|upper}}
+            </div>
+        {% else %}
+            <div class="observaciones-texto" contenteditable="true">
+            </div>
+        {% endif %}
+
     </div>
-    <div class="nombre-linea" style="margin-top: 50px;">
-        <span>Avance en el trabajo de tesis (%):</span>
-        <div class="input-container-corto">
-            <input type="text" class="input-over-line" value="%" />
-        </div>
-     
+<!-- Avance en el trabajo de tesis (%) -->
+<div class="nombre-linea" style="margin-top: 50px;">
+    <span>Avance en el trabajo de tesis (%):</span>
+    <div class="input-container-corto">
+        {% if anexo.avance_tesis %}
+            <input type="text" class="input-over-line" value="{{ anexo.avance_tesis }}" />
+        {% else %}
+            <input type="text" class="input-over-line" value="" />
+        {% endif %}
     </div>
+</div>
+
+    <!-- Nota -->
     <div class="justified-text">
         <p><strong>Nota:</strong> Usar porcentaje acentuado en la hoja de evaluación de desempeño del 
         Becario (formato CONAHCYT).</p>
     </div>
+
+    <!-- ¿Ha hecho cambio en el tema de tesis? -->
     <div class="nombre-linea">
         <span>¿Ha hecho cambio en el tema de tesis?:</span>
         <div class="input-container">
-            <input type="text" class="input-over-line" value="" />
+            <input type="text" class="input-over-line" value="{{ anexo.cambio_tema_tesis|yesno:"Sí,No" }}" />
         </div>
     </div>
-    
+
 
     <div class="tesis-new">
         <div class="lines">
             <!-- Las líneas están creadas mediante CSS de fondo -->
         </div>
-        <div class="observaciones-texto" contenteditable="true">
-          
-        </div>
+        {% if anexo.cambio_director_detalle %}
+            <div class="observaciones-texto" contenteditable="true">
+                    {{anexo.cambio_director_detalle|upper}}
+            </div>
+        {% else %}
+            <div class="observaciones-texto" contenteditable="true">
+            </div>
+        {% endif %}
+
+
     </div>
     <div class="nombre-linea" style="margin-top:50px">
         <span>¿Tiene su tesis registrada en plataforma CONAHCYT?:</span>
         <div class="input-container">
-            <input type="text" class="input-over-line" value="" />
+            {% if anexo.tesis_registrada_conacyt %}
+                <input type="text" class="input-over-line" value="Sí" />
+            {% else %}
+                <input type="text" class="input-over-line" value="No" />
+            {% endif %}
         </div>
     </div>
+
+    <div class="justified-text" style="margin-top:20px;">
+        <p>Calificaciones obtenidas hasta la fecha.</p>
+    </div>
+    
     <div class="table-container">
         <table>
             <thead>
@@ -395,90 +449,207 @@
                 </tr>
             </thead>
             <tbody>
+                <!-- Materia 1 -->
                 <tr>
                     <td>1</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <td>
+                        {% if anexo.materia1 %}
+                            {{ anexo.materia1|upper }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if anexo.calificacion1_materia1 %}
+                            {{ anexo.calificacion1_materia1 }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if anexo.calificacion2_materia1 %}
+                            {{ anexo.calificacion2_materia1 }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if anexo.promedio_materia1 %}
+                            {{ anexo.promedio_materia1 }}
+                        {% endif %}
+                    </td>
                 </tr>
+                
+                <!-- Materia 2 -->
                 <tr>
                     <td>2</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <td>
+                        {% if anexo.materia2 %}
+                            {{ anexo.materia2|upper }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if anexo.calificacion1_materia2 %}
+                            {{ anexo.calificacion1_materia2 }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if anexo.calificacion2_materia2 %}
+                            {{ anexo.calificacion2_materia2 }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if anexo.promedio_materia2 %}
+                            {{ anexo.promedio_materia2 }}
+                        {% endif %}
+                    </td>
                 </tr>
+                
+                <!-- Materia 3 -->
                 <tr>
                     <td>3</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <td>
+                        {% if anexo.materia3 %}
+                            {{ anexo.materia3|upper }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if anexo.calificacion1_materia3 %}
+                            {{ anexo.calificacion1_materia3 }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if anexo.calificacion2_materia3 %}
+                            {{ anexo.calificacion2_materia3 }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if anexo.promedio_materia3 %}
+                            {{ anexo.promedio_materia3 }}
+                        {% endif %}
+                    </td>
                 </tr>
+                
+                <!-- Materia 4 -->
                 <tr>
                     <td>4</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <td>
+                        {% if anexo.materia4 %}
+                            {{ anexo.materia4|upper }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if anexo.calificacion1_materia4 %}
+                            {{ anexo.calificacion1_materia4 }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if anexo.calificacion2_materia4 %}
+                            {{ anexo.calificacion2_materia4 }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if anexo.promedio_materia4 %}
+                            {{ anexo.promedio_materia4 }}
+                        {% endif %}
+                    </td>
                 </tr>
+                
+                <!-- Materia 5 -->
                 <tr>
                     <td>5</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <td>
+                        {% if anexo.materia5 %}
+                            {{ anexo.materia5|upper }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if anexo.calificacion1_materia5 %}
+                            {{ anexo.calificacion1_materia5 }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if anexo.calificacion2_materia5 %}
+                            {{ anexo.calificacion2_materia5 }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if anexo.promedio_materia5 %}
+                            {{ anexo.promedio_materia5 }}
+                        {% endif %}
+                    </td>
                 </tr>
             </tbody>
         </table>
     </div>
-</div>
+    
 
-
+<!-- Sección Dificultad con las Materias -->
 <div class="materias-info">
     <div class="lines">
         <!-- Las líneas están creadas mediante CSS de fondo -->
     </div>
-    <div class="observaciones-texto" contenteditable="true">
-      
-    </div>
+    
+    {% if anexo.dificultad_materia %}
+        <div class="observaciones-texto" contenteditable="true">
+            {{ anexo.dificultad_materia|upper }}
+        </div>
+    {% else %}
+        <div class="observaciones-texto" contenteditable="true">
+        </div>
+    {% endif %}
 </div>
 
-
+<!-- Sección Dificultad en el Aprendizaje debido al Profesor -->
 <div class="dificultad-info" style="margin-top: 50px;">
     <div class="lines">
         <!-- Las líneas están creadas mediante CSS de fondo -->
     </div>
-    <div class="observaciones-texto" contenteditable="true">
-      
-    </div>
+    
+    {% if anexo.dificultad_aprendizaje_profesor %}
+        <div class="observaciones-texto" contenteditable="true">
+            {{ anexo.dificultad_aprendizaje_profesor|upper }}
+        </div>
+    {% else %}
+        <div class="observaciones-texto" contenteditable="true">
+        </div>
+    {% endif %}
 </div>
 
-
+<!-- Sección Conocimientos Previos para las Materias del Programa -->
 <div class="conocimientos-info" style="margin-top: 50px;">
     <div class="lines">
         <!-- Las líneas están creadas mediante CSS de fondo -->
     </div>
-    <div class="observaciones-texto" contenteditable="true">
-      
-    </div>
+    
+    {% if anexo.conocimientos_previos %}
+        <div class="observaciones-texto" contenteditable="true">
+            {{ anexo.conocimientos_previos|upper }}
+        </div>
+    {% else %}
+        <div class="observaciones-texto" contenteditable="true">
+        </div>
+    {% endif %}
 </div>
 
-
+<!-- Sección Observaciones del Tutor sobre el Desempeño del Estudiante -->
 <div class="observaciones-info" style="margin-top: 50px;">
     <div class="lines">
         <!-- Las líneas están creadas mediante CSS de fondo -->
     </div>
-    <div class="observaciones-texto" contenteditable="true">
-      
-    </div>
+    
+    {% if anexo.observaciones_tutor %}
+        <div class="observaciones-texto" contenteditable="true">
+            {{ anexo.observaciones_tutor|upper }}
+        </div>
+    {% else %}
+        <div class="observaciones-texto" contenteditable="true">
+        </div>
+    {% endif %}
 </div>
-
 
 <div class="signature-box">
     <div class="line"></div>
-    <p><strong>Nombre, fecha y firma del Tutor</strong></p>
+    {% if tutor %}
+    <p><strong>{{tutor.get_full_name}}</strong></p>
+
+    {% else %}
+        <p><strong>Nombre, fecha y firma del Tutor</strong></p>
+    {% endif %}
 </div>
 
 {% endblock %}

@@ -57,27 +57,70 @@ class DocentesListView(ListView):
     model = CustomUser
     template_name = 'users/docentes_list.html'
     context_object_name = 'docentes'
+    paginate_by = 20  # Opcional: Para paginar resultados
 
     def get_queryset(self):
+        user = self.request.user
         docentes_group = Group.objects.get(name='Docente')
-        # Prefetch related 'tutorados' y 'alumno' para cada docente
-        queryset = CustomUser.objects.filter(groups=docentes_group).prefetch_related(
-            Prefetch('tutorados', queryset=TutorAlumno.objects.select_related('alumno'))
-        )
+        queryset = CustomUser.objects.filter(groups=docentes_group)
 
+        # Filtrar según el rol del usuario
+        if user.is_superuser:
+            # Superusuario: Ver todos los docentes
+            pass  # No se necesita filtrar
+        elif user.groups.filter(name='Coordinador').exists():
+            # Coordinador: Ver solo docentes de su posgrado
+            try:
+                coordinador = Coordinador.objects.get(usuario=user)
+                queryset = queryset.filter(posgrado_docente=coordinador.posgrado)
+            except Coordinador.DoesNotExist:
+                queryset = queryset.none()  # No mostrar nada si no hay posgrado asignado
+        elif user.groups.filter(name='Docente').exists():
+            # Docente: Ver solo su propia información
+            queryset = queryset.filter(pk=user.pk)
+        else:
+            # Otros roles (Alumno u otros): No mostrar ningún docente
+            queryset = queryset.none()
+
+        # Obtener el parámetro 'posgrado_id' desde GET
         posgrado_id = self.request.GET.get('posgrado_id')
-        if posgrado_id:
-            queryset = queryset.filter(posgrado_docente__id=posgrado_id)
 
-        return queryset
+        if posgrado_id:
+            # Validar si el usuario tiene permisos para filtrar por posgrado
+            if user.is_superuser:
+                queryset = queryset.filter(posgrado_docente__id=posgrado_id)
+            elif user.groups.filter(name='Coordinador').exists():
+                # Coordinador solo puede filtrar su posgrado, asegurando que posgrado_id coincide
+                try:
+                    coordinador = Coordinador.objects.get(usuario=user)
+                    if int(posgrado_id) == coordinador.posgrado.id:
+                        # Ya están filtrados por su posgrado
+                        pass
+                    else:
+                        # Si posgrado_id no coincide con el posgrado del coordinador, no mostrar nada
+                        queryset = queryset.none()
+                except Coordinador.DoesNotExist:
+                    queryset = queryset.none()
+            else:
+                # Otros roles no pueden filtrar por posgrado
+                pass
+
+        # (Opcional) Anotaciones adicionales si se requieren
+        # Por ejemplo, contar el número de alumnos tutelados por cada docente
+        # tutor_count = TutorAlumno.objects.filter(tutor=OuterRef('pk')).values('tutor').annotate(count=Count('alumno')).values('count')
+        # queryset = queryset.annotate(tutor_count=Subquery(tutor_count))
+
+        return queryset.order_by('last_name', 'first_name')  # Ordenar alfabéticamente
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
+        # Obtiene la queryset filtrada
         filtered_queryset = self.get_queryset()
 
+        # Calcula el total de docentes activos en la queryset filtrada
         context['total_docentes'] = filtered_queryset.filter(is_active=True).count()
 
+        # Calcula el total de maestría y doctorado en la queryset filtrada
         context['total_maestria'] = filtered_queryset.filter(
             posgrado_docente__nombre__in=[
                 "Maestría en Sistemas Computacionales",
@@ -90,23 +133,83 @@ class DocentesListView(ListView):
             posgrado_docente__nombre="Doctorado en Ciencias de la Ingeniería"
         ).distinct().count()
 
-        context['posgrados'] = Posgrado.objects.all()
+        # Añade los posgrados al contexto para el selector (solo si es superusuario o coordinador)
+        if self.request.user.is_superuser:
+            context['posgrados'] = Posgrado.objects.all()
+        elif self.request.user.groups.filter(name='Coordinador').exists():
+            try:
+                coordinador = Coordinador.objects.get(usuario=self.request.user)
+                context['posgrados'] = [coordinador.posgrado]
+            except Coordinador.DoesNotExist:
+                context['posgrados'] = []
+        else:
+            context['posgrados'] = []
+
+        # Meta información de la página
         context['dashboard_title'] = 'Lista de Docentes'
         context['breadcrumb_active_item'] = 'Lista de Docente'
         context['navbar'] = 'docente'
         context['url'] = 'home'
 
-        return context
+        # Pasar posgrado_id al contexto para mantener el valor seleccionado
+        context['selected_posgrado_id'] = self.request.GET.get('posgrado_id')
 
+        return context
 
 class AlumnosListView(ListView):
     model = CustomUser
     template_name = 'users/alumnos_list.html'
     context_object_name = 'alumnos'
+    paginate_by = 20  # Opcional: Para paginar resultados
 
     def get_queryset(self):
+        user = self.request.user
         alumnos_group = Group.objects.get(name='Alumno')
         queryset = CustomUser.objects.filter(groups=alumnos_group)
+
+        # Filtrar según el rol del usuario
+        if user.is_superuser:
+            # Superusuario: Ver todos los alumnos
+            pass  # No se necesita filtrar
+        elif user.groups.filter(name='Coordinador').exists():
+            # Coordinador: Ver solo alumnos de su posgrado
+            try:
+                coordinador = Coordinador.objects.get(usuario=user)
+                queryset = queryset.filter(posgrado_alumno=coordinador.posgrado)
+            except Coordinador.DoesNotExist:
+                queryset = queryset.none()  # No mostrar nada si no hay posgrado asignado
+        elif user.groups.filter(name='Docente').exists():
+            # Docente: Ver solo alumnos que tienen asignados como tutores
+            queryset = queryset.filter(tutor_asignado__tutor=user)
+        elif user.groups.filter(name='Alumno').exists():
+            # Alumno: Ver solo su propia información
+            queryset = queryset.filter(pk=user.pk)
+        else:
+            # Otros roles: No mostrar ningún alumno
+            queryset = queryset.none()
+
+        # Obtener el parámetro 'posgrado_id' desde GET
+        posgrado_id = self.request.GET.get('posgrado_id')
+
+        if posgrado_id:
+            # Validar si el usuario tiene permisos para filtrar por posgrado
+            if user.is_superuser:
+                queryset = queryset.filter(posgrado_alumno__id=posgrado_id)
+            elif user.groups.filter(name='Coordinador').exists():
+                # Coordinador solo puede filtrar su posgrado, asegurando que posgrado_id coincide
+                try:
+                    coordinador = Coordinador.objects.get(usuario=user)
+                    if int(posgrado_id) == coordinador.posgrado.id:
+                        # Ya están filtrados por su posgrado
+                        pass
+                    else:
+                        # Si posgrado_id no coincide con el posgrado del coordinador, no mostrar nada
+                        queryset = queryset.none()
+                except Coordinador.DoesNotExist:
+                    queryset = queryset.none()
+            else:
+                # Otros roles no pueden filtrar por posgrado
+                pass
 
         # Anotar si el alumno tiene un tutor y el nombre completo del tutor
         tutor_full_name = TutorAlumno.objects.filter(alumno=OuterRef('pk')).annotate(
@@ -123,18 +226,18 @@ class AlumnosListView(ListView):
         queryset = queryset.annotate(
             has_tutor=Exists(TutorAlumno.objects.filter(alumno=OuterRef('pk'))),
             tutor_name=Subquery(tutor_full_name)
-        )
+        ).select_related('posgrado_alumno')
 
-        return queryset
+        return queryset.order_by('last_name', 'first_name')  # Ordenar alfabéticamente
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # Obtiene la queryset filtrada
         filtered_queryset = self.get_queryset()
-        
+
         # Calcula el total de estudiantes activos en la queryset filtrada
         context['total_estudiantes'] = filtered_queryset.filter(is_active=True).count()
-        
+
         # Calcula el total de maestría y doctorado en la queryset filtrada
         context['total_maestria'] = filtered_queryset.filter(
             posgrado_alumno__nombre__in=[
@@ -142,22 +245,33 @@ class AlumnosListView(ListView):
                 "Maestría en Ingeniería Mecatrónica",
                 "Maestría en Ingeniería Administrativa"
             ]).count()
-        
+
         context['total_doctorado'] = filtered_queryset.filter(
             posgrado_alumno__nombre="Doctorado en Ciencias de la Ingeniería"
         ).count()
-        
-        # Añade los posgrados al contexto para el selector
-        context['posgrados'] = Posgrado.objects.all()
+
+        # Añade los posgrados al contexto para el selector (solo si es superusuario o coordinador)
+        if self.request.user.is_superuser:
+            context['posgrados'] = Posgrado.objects.all()
+        elif self.request.user.groups.filter(name='Coordinador').exists():
+            try:
+                coordinador = Coordinador.objects.get(usuario=self.request.user)
+                context['posgrados'] = [coordinador.posgrado]
+            except Coordinador.DoesNotExist:
+                context['posgrados'] = []
+        else:
+            context['posgrados'] = []
 
         # Meta información de la página
         context['dashboard_title'] = 'Lista de Alumnos'
         context['breadcrumb_active_item'] = 'Lista de Alumno'
         context['navbar'] = 'alumno'
         context['url'] = 'home'
+
+        # Pasar posgrado_id al contexto para mantener el valor seleccionado
+        context['selected_posgrado_id'] = self.request.GET.get('posgrado_id')
+
         return context
-
-
 
 
 
@@ -306,33 +420,71 @@ def get_docentes(request):
     # Preparar la respuesta
     docentes_data = [{'id': docente.id, 'name': docente.get_full_name()} for docente in docentes]
     return JsonResponse({'docentes': docentes_data})
+from django.db import transaction
 
 @require_POST
+@transaction.atomic
 def asignar_coordinador(request):
-
     usuario_id = request.POST.get('usuario_id')
     posgrado_id = request.POST.get('posgrado_id')  # Asumiendo que también se envía esto
 
+    if not usuario_id or not posgrado_id:
+        return JsonResponse({'success': False, 'error': 'Faltan datos requeridos.'}, status=400)
 
-    
-    usuario = CustomUser.objects.get(id=usuario_id)
-    posgrado = Posgrado.objects.get(id=posgrado_id)
-    
-    # Crear o actualizar el coordinador
-    Coordinador.objects.update_or_create(
+    try:
+        usuario = CustomUser.objects.get(id=usuario_id)
+    except CustomUser.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Usuario no encontrado.'}, status=404)
+
+    try:
+        posgrado = Posgrado.objects.get(id=posgrado_id)
+    except Posgrado.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Posgrado no encontrado.'}, status=404)
+
+    # Verificar si el usuario ya es coordinador de otro posgrado
+    if Coordinador.objects.filter(usuario=usuario).exclude(posgrado=posgrado).exists():
+        return JsonResponse({'success': False, 'error': 'El usuario ya es coordinador de otro posgrado.'}, status=400)
+
+    # Verificar si el posgrado ya tiene un coordinador asignado
+    if Coordinador.objects.filter(posgrado=posgrado).exclude(usuario=usuario).exists():
+        return JsonResponse({'success': False, 'error': 'Este posgrado ya tiene un coordinador asignado.'}, status=400)
+
+    # Asignar al usuario como coordinador del posgrado
+    coordinador, created = Coordinador.objects.update_or_create(
         posgrado=posgrado,
         defaults={'usuario': usuario}
     )
-    
-    return JsonResponse({'success': True})
+
+    # Agregar al usuario al grupo de 'Coordinador'
+    coordinador_group, group_created = Group.objects.get_or_create(name='Coordinador')
+    if not usuario.groups.filter(name='Coordinador').exists():
+        usuario.groups.add(coordinador_group)
+
+    return JsonResponse({'success': True, 'message': 'Coordinador asignado exitosamente.'})
 
 @require_POST
+@transaction.atomic
 def retirar_coordinador(request, posgrado_id):
     posgrado = get_object_or_404(Posgrado, id=posgrado_id)
-    Coordinador.objects.filter(posgrado=posgrado).delete()
-    messages.success(request, 'Coordinador retirado exitosamente.')
+    
+    try:
+        coordinador = Coordinador.objects.get(posgrado=posgrado)
+    except Coordinador.DoesNotExist:
+        messages.error(request, 'Este posgrado no tiene un coordinador asignado.')
+        return redirect('posgrados_list')  # Asegúrate de tener esta vista/url configurada
 
-    return redirect('posgrados_list')  # Asegúrate de tener esta vista/url configurada
+    usuario = coordinador.usuario
+
+    # Eliminar la asignación de coordinador
+    coordinador.delete()
+
+    # Verificar si el usuario sigue siendo coordinador de algún otro posgrado
+    if not Coordinador.objects.filter(usuario=usuario).exists():
+        coordinador_group = Group.objects.get(name='Coordinador')
+        usuario.groups.remove(coordinador_group)
+    
+    messages.success(request, 'Coordinador retirado exitosamente.')
+    return redirect('posgrados_list')  
 
 @require_POST  # Esta vista sólo debería aceptar solicitudes POST
 def eliminar_docente(request, user_id):

@@ -191,7 +191,13 @@
     <div class="nombre-linea" style="margin-bottom: 10px;">
         <span>Domicilio:</span>
         <div class="input-container">
+            {% if anexo.domicilio %}
             <input type="text" class="input-over-line" value="{{anexo.domicilio}}"/>
+
+            {% else %}
+            <input type="text" class="input-over-line" value=""/>
+
+            {% endif %}
         </div>
     </div>
 
@@ -377,7 +383,7 @@
         {% else %}
             <div class="observaciones-texto" contenteditable="true">
             </div>
-        {% endif %}-
+        {% endif %}
 
     </div>
     
@@ -419,9 +425,17 @@
         <div class="lines">
             <!-- Las líneas están creadas mediante CSS de fondo -->
         </div>
+
+        {% if anexo.observaciones_anexo1 %}
         <div class="observaciones-texto" contenteditable="true">
                 {{anexo.observaciones_anexo1|upper}}
         </div>
+        {% else %}
+        <div class="observaciones-texto" contenteditable="true">
+        </div>
+        
+        {% endif %}
+ 
     </div>
 
 

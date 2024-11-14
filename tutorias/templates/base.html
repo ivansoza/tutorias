@@ -170,34 +170,45 @@
                 </a>
             </li>
 
-            
-            <li class="nav-header">Usuarios</li>
-            <li class="nav-item">
+            {% if es_superusuario or es_coordinador or es_docente or es_alumno %}
+              <li class="nav-header">Usuarios</li>
 
-                <a href="{% url "posgrados_list" %}" class="nav-link {% if navbar == 'coordinador' %}active{% endif %}">
-                    <i class="nav-icon fas fa-chalkboard-teacher"></i>
-                    <p>
-                    Coordinadores
-                    </p>
-                </a>
-            </li>
-            <li class="nav-item">
+              {% if es_coordinador or es_superusuario%}
+                <li class="nav-item">
 
-                <a href="{% url "docentes-list" %}" class="nav-link {% if navbar == 'docente' %}active{% endif %}">
-                    <i class="nav-icon fas fa-chalkboard-teacher"></i>
-                    <p>
-                    Docentes
-                    </p>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="{% url "alumnos-list" %}" class="nav-link {% if navbar == 'alumno' %}active{% endif %}">
-                    <i class="nav-icon fas fa-user-graduate"></i>
-                    <p>
-                    Alumnos
-                    </p>
-                </a>
-            </li>
+                    <a href="{% url "posgrados_list" %}" class="nav-link {% if navbar == 'coordinador' %}active{% endif %}">
+                        <i class="nav-icon fas fa-chalkboard-teacher"></i>
+                        <p>
+                        Coordinadores
+                        </p>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+
+                    <a href="{% url "docentes-list" %}" class="nav-link {% if navbar == 'docente' %}active{% endif %}">
+                        <i class="nav-icon fas fa-chalkboard-teacher"></i>
+                        <p>
+                        Docentes
+                        </p>
+                    </a>
+                </li>
+
+
+              {% endif %}
+
+
+              
+              <li class="nav-item">
+                  <a href="{% url "alumnos-list" %}" class="nav-link {% if navbar == 'alumno' %}active{% endif %}">
+                      <i class="nav-icon fas fa-user-graduate"></i>
+                      <p>
+                      Alumnos
+                      </p>
+                  </a>
+              </li>
+            {% endif %}
+
 
 
 

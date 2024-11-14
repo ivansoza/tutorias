@@ -64,8 +64,22 @@ class Semestre(models.Model):
     iniciado = models.BooleanField(default=False)
     finalizado = models.BooleanField(default=False)
 
+    SEMESTRE_ORDINALES = {
+        1: "Primero",
+        2: "Segundo",
+        3: "Tercero",
+        4: "Cuarto",
+        5: "Quinto",
+        6: "Sexto",
+        7: "Séptimo",
+        8: "Octavo",
+        9: "Noveno",
+        10: "Décimo"
+    }
+
     def __str__(self):
-        return f"Semestre {self.numero} - {self.alumno.get_full_name()}"
+        nombre_semestre = self.SEMESTRE_ORDINALES.get(self.numero, f"{self.numero}º")
+        return f"{nombre_semestre} "
 
     class Meta:
         verbose_name = "Semestre"
