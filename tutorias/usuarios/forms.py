@@ -130,6 +130,82 @@ class Anexo1Form(forms.ModelForm):
         model = Anexo1
         exclude = ['semestre', 'alumno', 'tutor', 'estado', 'fecha_creacion', 'fecha_finalizacion', 'observaciones']
 
+    def __init__(self, *args, **kwargs):
+        super(Anexo1Form, self).__init__(*args, **kwargs)
+        
+        # Configuración de placeholders para los campos
+        self.fields['domicilio'].widget.attrs.update({
+            'rows': 2,
+            'placeholder': 'Ingrese el domicilio completo'
+        })
+        self.fields['telefono_casa'].widget.attrs.update({
+            'placeholder': 'Ingrese el teléfono de casa'
+        })
+        self.fields['telefono_celular'].widget.attrs.update({
+            'placeholder': 'Ingrese el teléfono celular'
+        })
+        self.fields['correo_electronico1'].widget.attrs.update({
+            'placeholder': 'Ingrese el primer correo electrónico'
+        })
+        self.fields['correo_electronico2'].widget.attrs.update({
+            'placeholder': 'Ingrese el segundo correo electrónico'
+        })
+      # Configurar el widget de fecha_nacimiento con formato
+        self.fields['fecha_nacimiento'].widget = DateInput(
+            attrs={
+                'type': 'date',  # HTML5 date input
+                'class': 'form-control',  # Agrega clases CSS si es necesario
+            },
+            format='%Y-%m-%d'
+        )
+        self.fields['fecha_nacimiento'].input_formats = ['%Y-%m-%d']
+
+
+        self.fields['fecha_oficio'].widget = DateInput(
+            attrs={
+                'type': 'date',  # HTML5 date input
+                'class': 'form-control',  # Agrega clases CSS si es necesario
+            },
+            format='%Y-%m-%d'
+        )
+        self.fields['fecha_oficio'].input_formats = ['%Y-%m-%d']
+
+
+        self.fields['lugar_nacimiento'].widget.attrs.update({
+            'placeholder': 'Ingrese el lugar de nacimiento'
+        })
+        self.fields['curp'].widget.attrs.update({
+            'placeholder': 'Ingrese el CURP'
+        })
+        self.fields['estado_civil'].widget.attrs.update({
+            'placeholder': 'Seleccione el estado civil'
+        })
+        self.fields['dependientes_economicos'].widget.attrs.update({
+            'placeholder': 'Ingrese el número de dependientes económicos'
+        })
+        self.fields['licenciatura'].widget.attrs.update({
+            'placeholder': 'Ingrese la licenciatura'
+        })
+        self.fields['institucion_licenciatura'].widget.attrs.update({
+            'placeholder': 'Ingrese la institución donde cursó la licenciatura'
+        })
+        self.fields['promedio_licenciatura'].widget.attrs.update({
+            'placeholder': 'Ingrese el promedio obtenido'
+        })
+        self.fields['opcion_titulacion'].widget.attrs.update({
+            'placeholder': 'Ingrese la opción de titulación'
+        })
+        self.fields['nombre_tesis'].widget.attrs.update({
+            'placeholder': 'Ingrese el nombre de la tesis (si aplica)'
+        })
+        self.fields['idioma_ingles_toefl'].widget.attrs.update({
+            'placeholder': 'Ingrese el porcentaje de TOEFL en inglés'
+        })
+        self.fields['beca_tipo'].widget.attrs.update({
+            'placeholder': 'Ingrese el tipo de beca'
+        })
+
+
 class Anexo1TutorForm(forms.ModelForm):
     class Meta:
         model = Anexo1
@@ -228,6 +304,141 @@ class Anexo2Form(forms.ModelForm):
     class Meta:
         model = Anexo2
         exclude = ['semestre', 'alumno', 'tutor', 'estado', 'fecha_creacion', 'fecha_finalizacion', 'observaciones']
+
+    def __init__(self, *args, **kwargs):
+        super(Anexo2Form, self).__init__(*args, **kwargs)
+        
+        # Configuración de placeholders y clases para materias y calificaciones
+        self.fields['materia1'].widget.attrs.update({
+            'placeholder': 'Ingrese el nombre de la Materia 1'
+        })
+        self.fields['calificacion1_materia1'].widget.attrs.update({
+            'placeholder': 'Calificación 1 de Materia 1'
+        })
+        self.fields['calificacion2_materia1'].widget.attrs.update({
+            'placeholder': 'Calificación 2 de Materia 1'
+        })
+        self.fields['promedio_materia1'].widget.attrs.update({
+            'placeholder': 'Promedio de Materia 1'
+        })
+
+        self.fields['materia2'].widget.attrs.update({
+            'placeholder': 'Ingrese el nombre de la Materia 2'
+        })
+        self.fields['calificacion1_materia2'].widget.attrs.update({
+            'placeholder': 'Calificación 1 de Materia 2'
+        })
+        self.fields['calificacion2_materia2'].widget.attrs.update({
+            'placeholder': 'Calificación 2 de Materia 2'
+        })
+        self.fields['promedio_materia2'].widget.attrs.update({
+            'placeholder': 'Promedio de Materia 2'
+        })
+
+        self.fields['materia3'].widget.attrs.update({
+            'placeholder': 'Ingrese el nombre de la Materia 3'
+        })
+        self.fields['calificacion1_materia3'].widget.attrs.update({
+            'placeholder': 'Calificación 1 de Materia 3'
+        })
+        self.fields['calificacion2_materia3'].widget.attrs.update({
+            'placeholder': 'Calificación 2 de Materia 3'
+        })
+        self.fields['promedio_materia3'].widget.attrs.update({
+            'placeholder': 'Promedio de Materia 3'
+        })
+
+        self.fields['materia4'].widget.attrs.update({
+            'placeholder': 'Ingrese el nombre de la Materia 4'
+        })
+        self.fields['calificacion1_materia4'].widget.attrs.update({
+            'placeholder': 'Calificación 1 de Materia 4'
+        })
+        self.fields['calificacion2_materia4'].widget.attrs.update({
+            'placeholder': 'Calificación 2 de Materia 4'
+        })
+        self.fields['promedio_materia4'].widget.attrs.update({
+            'placeholder': 'Promedio de Materia 4'
+        })
+
+        self.fields['materia5'].widget.attrs.update({
+            'placeholder': 'Ingrese el nombre de la Materia 5'
+        })
+        self.fields['calificacion1_materia5'].widget.attrs.update({
+            'placeholder': 'Calificación 1 de Materia 5'
+        })
+        self.fields['calificacion2_materia5'].widget.attrs.update({
+            'placeholder': 'Calificación 2 de Materia 5'
+        })
+        self.fields['promedio_materia5'].widget.attrs.update({
+            'placeholder': 'Promedio de Materia 5'
+        })
+
+        # Configuración previa de campos adicionales (directores y detalles)
+        self.fields['director_tesis'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': 'Seleccione el Director de Tesis'
+        })
+        self.fields['codirector_tesis'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': 'Seleccione el Codirector de Tesis'
+        })
+        self.fields['revisor_tesis'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': 'Seleccione el Revisor de Tesis'
+        })
+        self.fields['nombre_tesis'].widget.attrs.update({
+            'placeholder': 'Ingrese el nombre de la tesis',
+            'rows': 2
+        })
+        self.fields['avance_tesis'].widget.attrs.update({
+            'placeholder': 'Ingrese el avance en %'
+        })
+        self.fields['cambio_tema_tesis'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': '¿Ha cambiado el tema de tesis?'
+        })
+        self.fields['cambio_director_tesis'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': '¿Ha cambiado el director de tesis?'
+        })
+        self.fields['cambio_director_detalle'].widget.attrs.update({
+            'placeholder': 'Especifique el cambio de director de tesis',
+            'rows': 2
+        })
+        self.fields['tesis_registrada_conacyt'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': '¿Está registrada en CONACYT?'
+        })
+
+        
+
+        self.fields['dificultad_materia'].widget.attrs.update({
+            'placeholder': 'Describe la dificultad en la materia',
+            'rows': 2
+        })
+        self.fields['dificultad_aprendizaje_profesor'].widget.attrs.update({
+            'placeholder': 'Describe cualquier dificultad de aprendizaje relacionada con el profesor',
+            'rows': 2
+        })
+        self.fields['conocimientos_previos'].widget.attrs.update({
+            'placeholder': 'Describe los conocimientos previos requeridos',
+            'rows': 2
+        })
+        self.fields['observaciones_tutor'].widget.attrs.update({
+            'placeholder': 'Observaciones adicionales del tutor',
+            'rows': 2
+        })
+
+        self.fields['fecha_oficio'].widget = DateInput(
+            attrs={
+                'type': 'date',  # HTML5 date input
+                'class': 'form-control',  # Agrega clases CSS si es necesario
+            },
+            format='%Y-%m-%d'
+        )
+        self.fields['fecha_oficio'].input_formats = ['%Y-%m-%d']
+
 
 class Anexo2TutorForm(forms.ModelForm):
     class Meta:
@@ -380,6 +591,79 @@ class Anexo3Form(forms.ModelForm):
         model = Anexo3
         exclude = ['semestre', 'alumno', 'tutor', 'estado', 'fecha_creacion', 'fecha_finalizacion', 'observaciones']
 
+    def __init__(self, *args, **kwargs):
+        super(Anexo3Form, self).__init__(*args, **kwargs)
+
+        self.fields['director_tesis'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': 'Seleccione el Director de Tesis'
+        })
+        self.fields['codirector_tesis'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': 'Seleccione el Codirector de Tesis'
+        })
+        self.fields['revisor_tesis'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': 'Seleccione el Revisor de Tesis'
+        })
+
+
+        self.fields['nombre_tesis'].widget.attrs.update({
+            'placeholder': 'Ingrese el nombre de la tesis',
+            'rows': 2
+        })
+        self.fields['avance_tesis'].widget.attrs.update({
+            'placeholder': 'Ingrese el avance en %'
+        })
+
+        self.fields['materia1'].widget.attrs.update({
+            'placeholder': 'Ingrese el nombre de la Materia 1'
+        })
+
+        self.fields['materia2'].widget.attrs.update({
+            'placeholder': 'Ingrese el nombre de la Materia 2'
+        })
+
+        self.fields['materia3'].widget.attrs.update({
+            'placeholder': 'Ingrese el nombre de la Materia 3'
+        })
+
+        self.fields['materia4'].widget.attrs.update({
+            'placeholder': 'Ingrese el nombre de la Materia 4'
+        })
+
+        self.fields['materia5'].widget.attrs.update({
+            'placeholder': 'Ingrese el nombre de la Materia 5'
+        })
+
+        self.fields['calificacion_materia1'].widget.attrs.update({
+            'placeholder': 'Calificación  de Materia 1'
+        })
+        self.fields['calificacion_materia2'].widget.attrs.update({
+            'placeholder': 'Calificación  de Materia 2'
+        })
+        self.fields['calificacion_materia3'].widget.attrs.update({
+            'placeholder': 'Calificación  de Materia 3'
+        })
+        self.fields['calificacion_materia4'].widget.attrs.update({
+            'placeholder': 'Calificación  de Materia 4'
+        })
+
+        self.fields['calificacion_materia5'].widget.attrs.update({
+            'placeholder': 'Calificación  de Materia 5'
+        })
+
+
+
+        self.fields['fecha_oficio'].widget = DateInput(
+            attrs={
+                'type': 'date',  # HTML5 date input
+                'class': 'form-control',  # Agrega clases CSS si es necesario
+            },
+            format='%Y-%m-%d'
+        )
+        self.fields['fecha_oficio'].input_formats = ['%Y-%m-%d']
+
 class Anexo3TutorForm(forms.ModelForm):
     class Meta:
         model = Anexo3
@@ -460,3 +744,6 @@ class Anexo3TutorForm(forms.ModelForm):
             format='%Y-%m-%d'
         )
         self.fields['fecha_oficio'].input_formats = ['%Y-%m-%d']
+        self.fields['estado'].widget.attrs.update({
+            'class': 'form-control'
+        })
